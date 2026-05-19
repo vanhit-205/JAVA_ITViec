@@ -1,0 +1,718 @@
+﻿2.5 Phân tích use case
+2.5.1 Usecase “Đăng nhập”
+2.5.1.1 Mô tả chi tiết
+1. Tên use case
+Đăng nhập
+2. Mô tả vắn tắt
+Use case cho phép người dùng đã đăng ký tại hệ thống WorkHub nhập email và mật khẩu để xác thực tài khoản, sau đó được truy cập vào app WorkHub và sử dụng các dịch vụ của hệ thống.
+3. Luồng các sự kiện
+3.1.Luồng cơ bản
+Use case này bắt đầu khi người dùng truy cập vào ứng dụng WorkHub. Hệ thống hiển thi form đăng nhập gồm địa chỉ Email và mật khẩu để người dùng nhập thông tin đăng nhập.
+Người dùng nhập email và mật khẩu, sau đó nhấn nút “Đăng nhập”. Hệ thống so sánh thông tin với dữ liệu trong bảng USERS, nếu hợp lệ thì tạo phiên làm việc và điều hướng người dùng về giao diện chính của ứng dụng WorkHub. Use case kết thúc.
+ 3.2. Các luồng rẽ nhánh
+Sai thông tin: Tại bước 2 trong luồng cơ bản khi email hoặc mật khẩu không khớp, hệ thống hiển thị thông báo lỗi và quay lại bước 2 trong luồng cơ bản yêu cầu người dùng nhập lại.
+Quên mật khẩu: Tại bước 2 trong luồng cơ bản người dùng nhấp vào “Quên mật khẩu?”, hệ thống chuyển sang trang đặt lại mật khẩu nếu thành công quay lại bước 2 trong luồng cơ bản.
+Người dùng mới: Người dùng chọn “Đăng ký”, hệ thống chuyển qua use case Đăng ký, sau khi tạo tài khoản thành công quay lại trang đăng nhập use case kết thúc.
+4. Các yêu cầu đặc biệt
+Không có.
+5. Tiền điều kiện
+Người dùng đã có tài khoản hợp lệ trên ứng dụng WorkHub.
+Ứng dụng WorkHub hoạt động và kết nối Internet ổn định.
+6. Hậu điều kiện
+Thành công: Người dùng được xác thực, session được thiết lập, và chuyển hướng về trang chủ.
+Thất bại: Hiển thị thông báo lỗi, người dùng ở lại trang đăng nhập để thử lại.
+7. Điểm mở rộng
+Không có.
+2.5.1.2 Biểu đồ trình tự
+2.5.1.3 Biểu đồ lớp
+Hình dung màn hình
+2.5.2 Usecase “Đăng ký”
+2.5.2.1 Mô tả chi tiết
+1. Tên use case
+Đăng ký
+2. Mô tả vắn tắt
+Use case này cho phép người dùng mới tạo tài khoản trên hệ thống WorkHub bằng cách cung cấp các thông tin cần thiết (Email, Mật khẩu, Tên người dùng...). Sau khi đăng ký thành công, thông tin người dùng sẽ được lưu vào hệ thống và họ có thể bắt đầu sử dụng dịch vụ..
+3. Luồng các sự kiện
+3.1.Luồng cơ bản
+Use case bắt đầu khi người dùng chọn nút “Đăng ký” từ màn hình chào mừng hoặc màn hình đăng nhập của WorkHub. Hệ thống hiển thị biểu mẫu đăng ký bao gồm các trường: họ tên, địa chỉ email, mật khẩu và nhập lại mật khẩu.
+ Người dùng nhập đầy đủ thông tin vào biểu mẫu đăng ký và nhấn nút “Đăng ký”.
+Hệ thống kiểm tra tính hợp lệ của dữ liệu (định dạng email, độ mạnh mật khẩu, mật khẩu khớp nhau).
+Hệ thống kiểm tra xem email đã tồn tại trong bảng USERS chưa. Nếu chưa, hệ thống lưu thông tin người dùng mới vào cơ sở dữ liệu với trạng thái tài khoản mặc định. 
+Hệ thống thông báo đăng ký thành công và điều hướng người dùng quay lại màn hình đăng nhập. Use case kết thúc.
+3.2. Các luồng rẽ nhánh
+Dữ liệu không hợp lệ: Tại bước 3, nếu người dùng nhập sai định dạng email hoặc mật khẩu không đủ độ dài quy định, hệ thống hiển thị thông báo lỗi cụ thể tại trường đó và yêu cầu nhập lại.
+Email đã tồn tại: Tại bước 4, nếu email đã có trong hệ thống, hệ thống thông báo “Email này đã được sử dụng” và gợi ý người dùng đăng nhập hoặc dùng email khác.
+Mật khẩu không khớp: Tại bước 4, nếu "Mật khẩu" và "Nhập lại mật khẩu" không trùng khớp, hệ thống báo lỗi và yêu cầu xác nhận lại..
+Hủy đăng ký: Tại bất kỳ bước nào trước khi nhấn "Đăng ký", người dùng có thể chọn "Đăng nhập" nếu đã có tài khoản, hệ thống chuyển sang use case Đăng nhập.
+4. Các yêu cầu đặc biệt
+Mật khẩu phải được mã hóa trước khi lưu vào cơ sở dữ liệu.
+5. Tiền điều kiện
+Người dùng chưa có tài khoản hoặc muốn tạo tài khoản mới.
+Ứng dụng WorkHub hoạt động và kết nối Internet ổn định.
+6. Hậu điều kiện
+Thành công: Một bản ghi mới được tạo trong bảng USERS, người dùng có thể dùng thông tin này để đăng nhập.
+Thất bại: Không có tài khoản mới nào được tạo, hệ thống giữ nguyên các thông tin đã nhập để người dùng sửa đổi.
+7. Điểm mở rộng
+Đăng ký nhanh thông qua các tài khoản bên thứ ba (Google, Facebook, Apple ID).
+2.5.2.2 Biểu đồ trình tự
+2.5.2.3 Biểu đồ lớp
+2.5.2.4 Hình dung màn hình
+2.5.3 Usecase “Đăng xuất”
+2.5.3.1 Mô tả chi tiết
+1. Tên use case
+Đăng xuất
+2. Mô tả vắn tắt
+Use case này cho phép người dùng đang trong trạng thái đăng nhập kết thúc phiên làm việc (session) hiện tại trên ứng dụng WorkHub để bảo mật thông tin cá nhân.
+3. Luồng các sự kiện
+3.1.Luồng cơ bản
+Use case bắt đầu khi người dùng nhấn vào biểu tượng "Cài đặt" và chọn nút ‘Đăng xuất” trên giao diện chính của WorkHub. 
+Hệ thống hiển thị hộp thoại xác nhận: "Bạn có chắc chắn muốn đăng xuất?".
+Người dùng chọn “Đồng ý”. Hệ thống thực hiện xóa phiên làm việc (Session/Token) hiện tại trên thiết bị và phía Server (nếu có) và hướng người dùng quay về màn hình đăng nhập. Use case kết thúc.
+3.2. Các luồng rẽ nhánh
+Tại bước 2, nếu người dùng chọn “Hủy” hoặc nhấn ra ngoài hộp thoại, hệ thống đóng hộp thoại và giữ nguyên trạng thái đăng nhập, người dùng tiếp tục sử dụng ứng dụng tại trang hiện tại.
+4. Các yêu cầu đặc biệt
+Nếu người dùng trước đó chọn "Ghi nhớ đăng nhập", hệ thống phải xóa các thông tin lưu tạm (AccessToken/RefreshToken) để đảm bảo lần truy cập sau phải xác thực lại (tùy thuộc vào chính sách bảo mật của app).
+5. Tiền điều kiện
+Người dùng đang ở trạng thái đã đăng nhập vào ứng dụng WorkHub.
+Ứng dụng đang hoạt động và có kết nối Internet (để xóa session trên server).
+6. Hậu điều kiện
+Thành công: Phiên làm việc bị hủy bỏ, người dùng không thể truy cập vào các chức năng nội bộ nếu không đăng nhập lại.
+Thất bại: (Hiếm gặp, thường do mất kết nối mạng đột ngột) Hệ thống thông báo lỗi không thể kết nối server, tuy nhiên vẫn nên xóa session cục bộ trên máy để đảm bảo an toàn.
+7. Điểm mở rộng
+Không có.
+2.5.3.2 Biểu đồ trình tự
+2.5.3.3 Biểu đồ lớp
+Hình dung màn hình
+2.5.4 Usecase “Cập nhập thông tin cá nhân”
+2.5.4.1 Mô tả chi tiết
+1. Tên use case
+Cập nhật thông tin cá nhân
+2. Mô tả vắn tắt
+Use case này cho phép người dùng đã đăng nhập thay đổi các thông tin cá nhân trên hệ thống WorkHub để làm mới hồ sơ hoặc cập nhật thông tin liên lạc mới nhất (họ tên, địa chỉ, tuổi tác, …)
+3. Luồng các sự kiện
+3.1.Luồng cơ bản
+Use case bắt đầu khi người dùng truy cập vào mục "Hồ sơ cá nhân. Hệ thống hiển thị thông tin hiện tại của người dùng (ảnh đại diện, họ tên, địa chỉ, tuổi tác, …)
+Người dùng thực hiện thay đổi một hoặc nhiều thông tin (ví dụ: chọn ảnh mới từ thiết bị, sửa tên hiển thị). 
+Người dùng nhấn nút “Cập nhật”. Hệ thống kiểm tra tính hợp lệ của dữ liệu mới và ghi đè thông tin mới vào bảng USERS trong cơ sở dữ liệu.
+Hệ thống hiển thị thông báo "Cập nhật thành công" và hiển thị thông tin mới trên giao diện. Use case kết thúc.
+3.2. Các luồng rẽ nhánh
+Hủy cập nhật: Tại bước 3, người dùng nhấn nút “Hủy” hoặc quay lại trang trước. Hệ thống không lưu các thay đổi và giữ nguyên dữ liệu cũ.
+Dữ liệu không hợp lệ: Tại bước 3, nếu thông tin nhập vào sai quy định (ví dụ: tuổi chứa chữ cái), hệ thống báo lỗi tại trường tương ứng và yêu cầu người dùng sửa lại.
+Lỗi tải ảnh: Nếu người dùng cập nhật ảnh đại diện nhưng định dạng file không được hỗ trợ (không phải JPG/PNG) hoặc dung lượng quá lớn, hệ thống thông báo lỗi và yêu cầu chọn lại ảnh khác.
+4. Các yêu cầu đặc biệt
+Địa chỉ email thường là duy nhất và dùng để đăng nhập nên hệ thống có thể khóa không cho sửa (read-only) hoặc yêu cầu xác thực qua mã OTP nếu muốn đổi.
+5. Tiền điều kiện
+Người dùng đang ở trạng thái đã đăng nhập vào ứng dụng WorkHub.
+Ứng dụng có kết nối Internet ổn định để gửi dữ liệu về server.
+6. Hậu điều kiện
+Thành công: Thông tin mới được lưu vĩnh viễn, các người dùng khác trong danh sách bạn bè sẽ thấy thông tin (tên, ảnh) mới của người dùng này.
+Thất bại: Dữ liệu cũ vẫn giữ nguyên, hệ thống báo lỗi cụ thể để người dùng biết lý do không thể cập nhật.
+7. Điểm mở rộng
+Không có.
+2.5.4.2 Biểu đồ trình tự
+2.5.4.3 Biểu đồ lớp
+Hình dung màn hình
+2.5.5 Use case “Quên mật khẩu”
+2.5.5.1 Mô tả chi tiết
+1. Tên use case
+Quên mật khẩu
+2. Mô tả vắn tắt
+Use case này cho phép người dùng đặt lại mật khẩu mới trong trường hợp họ không nhớ mật khẩu cũ, thông qua việc xác thực quyền sở hữu tài khoản bằng địa chỉ Email đã đăng ký.
+3. Luồng các sự kiện
+3.1.Luồng cơ bản
+Use case bắt đầu khi người dùng nhấn vào liên kết “Quên mật khẩu?” tại màn hình Đăng nhập. Hệ thống hiển thị giao diện yêu cầu người dùng nhập địa chỉ Email đã đăng ký tài khoản.
+Người dùng nhập Email và nhấn “Gửi mã xác nhận”. Hệ thống kiểm tra Email có tồn tại trong hệ thống hay không. Nếu có, hệ thống gửi một mã OTP (hoặc đường dẫn khôi phục) đến Email của người dùng.
+Hệ thống hiển thị màn hình nhập mã xác thực. Người dùng nhập mã nhận được từ Email. Nếu chính xác, hệ thống hiển thị màn hình “Đặt lại mật khẩu mới”.
+Người dùng nhập mật khẩu mới và xác nhận mật khẩu mới, sau đó nhấn “Hoàn thành”. Hệ thống cập nhật mật khẩu mới vào cơ sở dữ liệu và thông báo đặt lại mật khẩu thành công. Use case kết thúc.
+3.2. Các luồng rẽ nhánh
+Email không tồn tại: Tại bước 2, nếu Email chưa được đăng ký trong hệ thống, hệ thống hiển thị thông báo lỗi "Email không tồn tại" và yêu cầu người dùng kiểm tra lại.
+Mã xác thực sai hoặc hết hạn: Tại bước 6, nếu người dùng nhập sai mã hoặc mã đã quá thời gian hiệu lực, hệ thống thông báo lỗi và cho phép người dùng yêu cầu gửi lại mã mới.
+Mật khẩu không khớp: Tại bước 7, nếu mật khẩu mới và mật khẩu xác nhận không trùng nhau, hệ thống yêu cầu người dùng nhập lại.
+Hủy quy trình: Người dùng có thể chọn quay lại màn hình Đăng nhập bất cứ lúc nào, mọi thay đổi sẽ không được lưu.
+4. Các yêu cầu đặc biệt
+Mã xác thực (OTP) phải có thời hạn sử dụng ngắn (thường từ 3-5 phút) để đảm bảo bảo mật.
+Giới hạn số lần gửi yêu cầu quên mật khẩu trong một khoảng thời gian nhất định để tránh bị spam (Rate limiting).
+5. Tiền điều kiện
+Người dùng phải có một tài khoản hợp lệ trên NexTalk gắn liền với một Email có thật.
+Hệ thống máy chủ gửi mail hoạt động bình thường và thiết bị có kết nối Internet.
+6. Hậu điều kiện
+Thành công: Mật khẩu cũ bị hủy bỏ, mật khẩu mới được cập nhật. Người dùng dùng mật khẩu mới để đăng nhập.
+Thất bại: Mật khẩu cũ vẫn giữ nguyên, người dùng không được phép truy cập vào bước đặt lại mật khẩu nếu không vượt qua xác thực.
+7. Điểm mở rộng
+Không có.
+2.5.5.2 Biểu đồ trình tự
+2.5.5.3 Biểu đồ lớp
+Hình dung màn hình
+2.5.6 Use case “Quản lý user”
+2.5.6.1 Mô tả chi tiết
+1. Tên use case
+Quản lý User
+2. Mô tả vắn tắt
+Use case này cho phép người quản trị hệ thống thực hiện các thao tác quản lý tài khoản người dùng như thêm mới, chỉnh sửa, xóa hoặc xem danh sách người dùng trong hệ thống NexTalk.
+3. Luồng các sự kiện
+3.1.Luồng cơ bản
+Use case bắt đầu khi người quản trị chọn chức năng “Quản lý User” trên giao diện hệ thống. Hệ thống hiển thị form quản lý User gồm các trường nhập dữ liệu cùng các nút chức năng: Thêm, sửa, xoá, làm mới và bảng danh sách người dùng.
+Xem danh sách User: Hệ thống tự động truy xuất và hiển thị danh sách toàn bộ người dùng hiện có với các thông tin như: Tên đăng nhập, Email, Họ tên, Tuổi, Công ty và Vai trò.
+Thêm mới User : Người quản trị nhập các thông tin: Tên user, Mật khẩu, họ và tên, email, tuổi, chọn công ty và vai trò. Người quản trị nhấn “Thêm”, hệ thống kiểm tra tính hợp lệ và lưu dữ liệu mới vào bảng người dùng trong cơ sở dữ liệu, sau đó hiển thị lại danh sách.
+Cập nhật thông tin User: Khi người quản trị chọn một bản ghi từ danh sách và nhấn “Sửa”, hệ thống hiển thị thông tin chi tiết của user đó. Người quản trị thực hiện chỉnh sửa các thông tin cần thiết và nhấn lưu lại để hệ thống cập nhật vào cơ sở dữ liệu.
+Xóa User: Khi người quản trị chọn một bản ghi và nhấn “Xóa”, hệ thống yêu cầu xác nhận. Nếu đồng ý, hệ thống xóa người dùng khỏi cơ sở dữ liệu.
+Hệ thống hiển thị thông báo kết quả tương ứng (thêm/sửa/xóa thành công). Use case kết thúc.
+3.2. Các luồng rẽ nhánh
+Tại bước nhập liệu trong luồng cơ bản, nếu người quản trị không nhập đầy đủ thông tin bắt buộc (ví dụ bỏ trống Email hoặc Mật khẩu), hệ thống hiển thị thông báo “Thiếu thông tin” và yêu cầu nhập lại. Use case kết thúc.
+Nếu dữ liệu nhập không hợp lệ (ví dụ Email đã tồn tại hoặc định dạng không đúng), hệ thống hiển thị thông báo lỗi và không cho lưu. Use case kết thúc.
+4. Các yêu cầu đặc biệt
+Hệ thống tự động ghi nhận thông tin người tạo và thời gian tạo khi thêm mới hoặc cập nhật.
+Cho phép cập nhật danh sách người dùng ngay sau khi thực hiện thêm, sửa hoặc xóa.
+5. Tiền điều kiện
+Người quản trị đã đăng nhập vào hệ thống NexTalk. 
+Cơ sở dữ liệu đang hoạt động bình thường.
+6. Hậu điều kiện
+Không có.
+7. Điểm mở rộng
+Không có.
+2.5.6.2 Biểu đồ trình tự
+2.5.6.3 Biểu đồ lớp
+2.5.7
+2.5.7.4 Hình dung màn hình
+2.5.7.1 Mô tả chi tiết
+2.5.7.2 Biểu đồ trình tự
+2.5.7.3 Biểu đồ lớp
+2.5.7.4 Hình dung màn hình
+2.5.8
+2.5.8.1 Mô tả chi tiết
+2.5.8.2 Biểu đồ trình tự
+2.5.8.3 Biểu đồ lớp
+2.5.8.4 Hình dung màn hình
+2.5.9 Use case "Xem danh sách các công ty"
+2.5.9.1 Mô tả chi tiết
+1. Tên Use Case: Xem danh sách các công ty
+2. Mô tả vắn tắt: Use case cho phép Admin và Người dùng (Ứng viên) xem danh sách các công ty có trong hệ thống.
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Use case bắt đầu khi người dùng (Admin, Nhân viên (HR) hoặc Ứng viên) truy cập vào hệ thống
+Người dùng truy cập vào chức năng xem danh sách công ty
+Hệ thống truy xuất dữ liệu từ cơ sở dữ liệu bảng companys
+Hệ thống hiển thị danh sách công ty theo vai trò:
+Admin: hiển thị tất cả công ty dạng bảng (tên, địa chỉ, ngày tạo, ngày cập nhật)
+Nhân viên (HR): hiển thị công ty thuộc quyền quản lý dạng bảng
+Ứng viên: hiển thị dạng card (logo, tên công ty)
+Kết thúc use case
+3.2 Luồng rẽ nhánh:
+Tại bất kỳ thời điểm nào trong luồng cơ bản, nếu hệ thống không kết nối được với cơ sở dữ liệu hoặc server, hệ thống hiển thị thông báo “Lỗi kết nối”. Use case kết thúc.
+Tại bước 3, nếu bảng companys không có dữ liệu, hệ thống hiển thị thông báo “Không có công ty nào”. Use case kết thúc.
+Tại bước 3, nếu hệ thống truy xuất dữ liệu thất bại, hệ thống hiển thị thông báo lỗi hệ thống. Use case kết thúc.
+Tại bước 4, nếu người dùng là Nhân viên (HR) nhưng không có công ty thuộc quyền quản lý (company_id), hệ thống hiển thị thông báo “Không có dữ liệu công ty”. Use case kết thúc.
+4. Các yêu cầu đặc biệt: Dữ liệu hiển thị phải phù hợp với vai trò người dùng (Admin, HR, Ứng viên). Hệ thống phải truy xuất đúng dữ liệu từ bảng companys
+5. Tiền điều kiện: Hệ thống đang hoạt động bình thường. Dữ liệu công ty đã được lưu trong hệ thống. Người dùng đã đăng nhập
+6. Hậu điều kiện: Danh sách công ty được hiển thị theo đúng vai trò người dùng. Người dùng có thể tiếp tục thực hiện các thao tác khác (xem chi tiết, chỉnh sửa, xóa, phân trang)
+7. Điểm mở rộng: Sắp xếp theo số lượng job. Hiển thị số job của mỗi công ty
+2.5.9.2 Biểu đồ trình tự
+2.5.9.3 Biểu đồ lớp
+2.5.9.4 Hình dung màn hình
+a) Giao diện dành cho Ứng viên
+b) Giao diện dành cho Admin
+2.5.10 Use case "Xem chi tiết công ty"
+2.5.10.1 Mô tả chi tiết
+1. Tên Use Case: Xem chi tiết công ty
+2. Mô tả vắn tắt: Use case cho phép người dùng xem thông tin chi tiết của một công ty trong hệ thống.
+3. Luồng các sự kiện
+3.1. Luồng cơ bản:
+Use case bắt đầu khi người dùng chọn một công ty từ danh sách công ty.
+Hệ thống nhận yêu cầu xem chi tiết công ty.
+Hệ thống truy xuất dữ liệu công ty từ cơ sở dữ liệu.
+Hệ thống hiển thị thông tin chi tiết công ty.
+Kết thúc use case.
+3.2. Luồng rẽ nhánh:
+Tại bất kỳ thời điểm nào trong luồng cơ bản, nếu hệ thống không kết nối được với cơ sở dữ liệu, hệ thống hiển thị thông báo lỗi “Lỗi kết nối”. Use case kết thúc.
+Tại bước 3 trong luồng cơ bản, nếu không tìm thấy công ty với ID đã cung cấp, hệ thống hiển thị thông báo “Công ty không tồn tại”. Use case kết thúc.
+Tại bước 3 trong luồng cơ bản, nếu hệ thống truy xuất dữ liệu thất bại, hệ thống hiển thị thông báo lỗi hệ thống. Use case kết thúc.
+4. Các yêu cầu đặc biệt: không có
+5. Tiền điều kiện: không có
+6. Hậu điều kiện: Thông tin chi tiết công ty được hiển thị.
+7. Điểm mở rộng: Hiển thị danh sách job thuộc công ty. Hiển thị số lượng job đang tuyển. Hiển thị đánh giá công ty.
+2.5.10.2 Biểu đồ trình tự
+2.5.10.3 Biểu đồ lớp
+2.5.10.4 Hình dung màn hình
+2.5.11 Use case "Thêm mới công ty"
+2.5.11.1 Mô tả chi tiết
+1. Tên Use case: Thêm mới công ty
+2. Mô tả vắn tắt: Use case cho phép Quản trị viên (Admin) tạo và thêm dữ liệu của một công ty mới vào hệ thống.
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Use case bắt đầu khi Quản trị viên đang ở trang quản lý Danh sách công ty.
+Quản trị viên nhấn vào nút "Thêm mới"
+Hệ thống hiển thị biểu mẫu "Thêm mới công ty" bao gồm các trường nhập liệu.
+Quản trị viên nhập thông tin hợp lệ vào các trường dữ liệu.
+Quản trị viên nhấn nút "Tạo mới"
+Hệ thống xác thực dữ liệu đầu vào và lưu thông tin công ty mới vào cơ sở dữ liệu.
+Hệ thống đóng biểu mẫu, hiển thị thông báo "Thêm mới thành công và tự động làm mới danh sách để hiển thị công ty vừa thêm.
+Kết thúc use case.
+3.2. Luồng rẽ nhánh:
+Tại bước 4, nếu Quản trị viên để trống các trường dữ liệu bắt buộc, hệ thống sẽ báo lỗi và không cho phép gửi form. Tiến trình dừng lại chờ người dùng nhập bổ sung.
+Tại bước 6, nếu file ảnh Logo tải lên không đúng định dạng hoặc vượt quá dung lượng tối đa cho phép, hệ thống hiển thị thông báo lỗi file tải lên.
+Tại bước 6, nếu hệ thống gặp sự cố mất kết nối mạng hoặc lỗi máy chủ trong quá trình lưu, hệ thống hiển thị thông báo "Lỗi hệ thống, vui lòng thử lại sau".
+Tại bất kỳ bước nào từ 3 đến 4, nếu Quản trị viên nhấn nút "Hủy" hoặc click chuột ra ngoài khu vực biểu mẫu, hệ thống sẽ đóng biểu mẫu và hủy bỏ mọi dữ liệu đang nhập dở. Use case kết thúc.
+4. Các yêu cầu đặc biệt: Ảnh Logo tải lên cần hiển thị bản xem trước (Preview) ngay trên biểu mẫu trước khi tiến hành lưu.
+5. Tiền điều kiện: Hệ thống đang hoạt động bình thường. Người dùng đã đăng nhập với tài khoản có quyền Quản trị (Admin) và được cấp quyền (Permission) thực hiện thao tác tạo mới công ty. Người dùng đang truy cập vào trang quản lý công ty
+6. Hậu điều kiện: Một bản ghi công ty mới được tạo ra và lưu trữ an toàn trong cơ sở dữ liệu. Dữ liệu công ty mới lập tức xuất hiện trong danh sách quản lý của Admin và hiển thị ngoài trang chủ (dành cho ứng viên).
+7. Điểm mở rộng: Hệ thống có thể tự động kiểm tra trùng lặp (ví dụ: Cảnh báo nếu Tên công ty đã tồn tại trong hệ thống trước đó).
+2.5.11.2 Biểu đồ trình tự
+2.5.11.3 Biểu đồ lớp
+2.5.11.4 Hình dung màn hình
+2.5.12 Use case "Xóa công ty"
+2.5.12.1 Mô tả chi tiết
+1. Tên Use Case: Xóa công ty
+2. Mô tả vắn tắt: Use case cho phép Quản trị viên (Admin) xóa dữ liệu của một công ty đã tồn tại khỏi hệ thống.
+3. Luồng các sự kiện
+3.1. Luồng cơ bản:
+Use case bắt đầu khi Quản trị viên đang ở giao diện "Công ty"
+Quản trị viên tìm đến dòng thông tin của công ty muốn xóa và nhấn vào biểu tượng Xóa
+Hệ thống hiển thị hộp thoại xác nhận với nội dung: "Xác nhận xóa company - Bạn có chắc chắn muốn xóa company này?" cùng hai nút: "Hủy" và "Xác nhận".
+Quản trị viên nhấn nút "Xác nhận".
+Hệ thống gửi yêu cầu xóa tới server và kiểm tra các ràng buộc dữ liệu liên quan đến công ty này trong cơ sở dữ liệu.
+Nếu công ty độc lập (không có dữ liệu nào phụ thuộc), hệ thống tiến hành xóa bản ghi khỏi cơ sở dữ liệu.
+Hệ thống đóng hộp thoại, hiển thị thông báo "Xóa thành công" và tự động làm mới giao diện để loại bỏ công ty đó khỏi danh sách hiển thị.
+Kết thúc use case.
+3.2. Luồng rẽ nhánh:
+Tại bước 3, nếu Quản trị viên đổi ý và nhấn nút "Hủy", popup sẽ đóng lại và quá trình xóa bị hủy bỏ. Dữ liệu công ty giữ nguyên. Use case kết thúc.
+Tại bước 5 (Rẽ nhánh do ràng buộc dữ liệu): Nếu hệ thống phát hiện công ty này đang có các dữ liệu khác tham chiếu đến, hệ thống sẽ chặn thao tác xóa để đảm bảo tính toàn vẹn dữ liệu. Hệ thống sẽ hiển thị lỗi bằng một thông báo lỗi. Công ty không bị xóa. Use case kết thúc.
+Tại bước 6, nếu hệ thống bị lỗi kết nối mạng hoặc server không phản hồi đúng lúc, hệ thống hiển thị thông báo lỗi "Xóa thất bại, vui lòng thử lại".
+4. Các yêu cầu đặc biệt: Thao tác xóa là hành động nhạy cảm, bắt buộc phải có popup xác nhận để tránh việc người dùng vô tình click nhầm. Quản lý chặt chẽ lỗi ràng buộc khóa ngoại (Foreign key) để không làm vỡ cấu trúc dữ liệu của các chức năng khác (Jobs, Users).
+5. Tiền điều kiện: Người dùng đăng nhập bằng tài khoản Quản trị viên (Admin). Công ty cần xóa đang tồn tại và hiển thị trên bảng danh sách.
+6. Hậu điều kiện: Trường hợp luồng cơ bản: Công ty bị loại bỏ hoàn toàn khỏi hệ thống, ứng viên cũng không còn nhìn thấy công ty này ngoài trang chủ. Trường hợp có ràng buộc (Luồng rẽ nhánh): Dữ liệu công ty vẫn được bảo toàn
+7. Điểm mở rộng: Thay vì xóa vĩnh viễn dữ liệu, hệ thống chỉ đánh dấu công ty đó là "Đã ẩn". Điều này giúp Admin có thể khôi phục lại dữ liệu nếu lỡ xóa nhầm và không làm mất lịch sử dữ liệu của hệ thống.
+2.5.12.2 Biểu đồ trình tự
+2.5.12.3 Biểu đồ lớp
+2.5.12.4 Hình dung màn hình
+2.5.13 Use case "Cập nhật thông tin công ty"
+2.5.13.1 Mô tả chi tiết
+1. Tên Use Case: Cập nhật thông tin công ty
+2. Mô tả vắn tắt: Use case cho phép Quản trị viên (Admin) chỉnh sửa, thay đổi hoặc bổ sung các thông tin hiện có của một công ty trên hệ thống.
+3. Luồng các sự kiện
+3.1. Luồng cơ bản:
+Use case bắt đầu khi Quản trị viên đang ở giao diện "Danh sách Công ty"
+Quản trị viên tìm đến công ty cần chỉnh sửa và nhấn vào biểu tượng Sửa
+Hệ thống hiển thị biểu mẫu "Cập nhật Company" với các thông tin hiện tại của công ty đó đã được điền sẵn vào các trường:
+Quản trị viên thực hiện thay đổi thông tin tại các trường cần thiết.
+Quản trị viên nhấn nút "Cập nhật".
+Hệ thống kiểm tra tính hợp lệ của dữ liệu mới, cập nhật vào cơ sở dữ liệu
+Hệ thống đóng biểu mẫu, hiển thị thông báo "Cập nhật công ty thành công" và làm mới danh sách hiển thị.
+Kết thúc use case.
+3.2. Luồng rẽ nhánh:
+Tại bước 3, nếu Quản trị viên nhấn nút "Hủy" hoặc click ra ngoài vùng biểu mẫu, hệ thống sẽ đóng biểu mẫu và không lưu lại bất kỳ thay đổi nào.
+Tại bước 6, nếu dữ liệu nhập vào không hợp lệ (ví dụ: để trống tên công ty), hệ thống sẽ hiển thị cảnh báo lỗi và giữ nguyên biểu mẫu để Quản trị viên chỉnh sửa lại.
+Tại bước 6, nếu xảy ra lỗi kết nối cơ sở dữ liệu hoặc lỗi phía máy chủ, hệ thống hiển thị thông báo lỗi "Cập nhật thất bại" và giữ lại dữ liệu đang sửa trên form.
+4. Các yêu cầu đặc biệt: không có
+5. Tiền điều kiện: Người dùng đã đăng nhập với quyền Quản trị viên (Admin). Công ty cần chỉnh sửa phải tồn tại trong hệ thống.
+6. Hậu điều kiện: Các thông tin của công ty được cập nhật mới nhất trong cơ sở dữ liệu. Thay đổi được phản ánh ngay lập tức tại danh sách quản lý của Admin và trang chi tiết công ty của Ứng viên.
+7. Điểm mở rộng: Lưu lại lịch sử chỉnh sửa (ai sửa, sửa lúc nào) để phục vụ việc kiểm soát dữ liệu.
+2.5.13.2 Biểu đồ trình tự
+2.5.13.3 Biểu đồ lớp
+2.5.13.4 Hình dung màn hình
+2.5.14 Use case "Xem danh sách các công việc"
+2.5.14.1 Mô tả chi tiết
+1. Tên Use case: Xem danh sách các công việc
+2. Mô tả vắn tắt: Use case cho phép quản trị viên và ứng viên xem danh sách các công việc trên hệ thống.
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Người dùng (Admin hoặc Ứng viên) truy cập chức năng xem danh sách công việc
+Hệ thống truy xuất dữ liệu công việc từ cơ sở dữ liệu bảng Jobs:- Admin: lấy tất cả công việc- Ứng viên: chỉ lấy các công việc có trạng thái Active
+Hệ thống hiển thị danh sách công việc
+Kết thúc use case
+3.2. Luồng rẽ nhánh:
+Lỗi kết nối: Tại bước 2, nếu hệ thống không kết nối được với cơ sở dữ liệu hoặc server, hệ thống hiển thị thông báo “Lỗi kết nối”. Use case kết thúc.
+Danh sách trống: Tại bước 3, nếu không có công việc nào trong hệ thống, hệ thống hiển thị thông báo “Danh sách trống”. Use case kết thúc.
+HR không có công ty: Tại bước 2, nếu người dùng là HR nhưng không có company_id, hệ thống hiển thị thông báo “Không có dữ liệu công việc”. Use case kết thúc.
+4. Các yêu cầu đặc biệt: Hệ thống phải phân quyền và hiển thị dữ liệu theo đúng vai trò (Admin, Ứng viên). Hệ thống chỉ hiển thị các công việc Active cho Ứng viên
+5. Tiền điều kiện: Hệ thống hoạt động bình thường. Dữ liệu công việc đã tồn tại trong bảng Jobs. Người dùng đã đăng nhập, admin phải đăng nhập bằng tài khoản admin
+6. Hậu điều kiện: Danh sách công việc được hiển thị đúng định dạng và đúng với tiêu chí truy vấn. Người dùng có thể tiếp tục:
+- Admin: quản lý (xem, sửa, xóa)
+- Ứng viên: xem chi tiết và ứng tuyển
+7. Điểm mở rộng: Hệ thống hỗ trợ phân trang dữ liệu để tối ưu hiệu suất truy xuất khi số lượng công việc lớn. Hệ thống hỗ trợ sắp xếp danh sách theo các tiêu chí (Ví dụ: mức lương tăng/giảm dần, thời gian tạo mới nhất). Tìm kiếm nâng cao (skill, location, level,...). Gợi ý công việc dựa trên lịch sử tìm kiếm (đối với người dùng)
+2.5.14.2 Biểu đồ trình tự
+2.5.14.3 Biểu đồ lớp
+2.5.14.4 Hình dung màn hình
+a) Xem danh sách công việc cho người dùng
+b) Xem danh sách công việc cho admin
+2.5.15 Use case "Xem chi tiết công việc"
+2.5.15.1 Mô tả chi tiết
+1. Tên Use Case: Xem chi tiết công việc
+2. Mô tả vắn tắt: Use case cho phép người dùng xem toàn bộ thông tin chi tiết của một bài đăng tuyển dụng cụ thể trên hệ thống.
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Người dùng chọn một công việc cụ thể từ trang chủ hoặc trang danh sách công việc.
+Hệ thống tiếp nhận yêu cầu và điều hướng người dùng đến trang chi tiết công việc.
+Hệ thống truy xuất dữ liệu chi tiết của công việc đó từ cơ sở dữ liệu
+Hệ thống hiển thị các thông tin chi tiết công việc
+Kết thúc use case.
+3.2. Luồng rẽ nhánh:
+Tại bất kỳ thời điểm nào, nếu hệ thống mất kết nối cơ sở dữ liệu, hệ thống thông báo "Lỗi kết nối". Use case kết thúc.
+Tại bước 3, nếu hệ thống không tìm thấy dữ liệu công việc (do bài đăng đã bị xóa, hết hạn, bị ẩn, hoặc người dùng truy cập sai đường dẫn), hệ thống điều hướng sang trang lỗi 404 hoặc thông báo "Công việc không tồn tại/đã đóng". Use case kết thúc.
+4. Các yêu cầu đặc biệt: không có
+5. Tiền điều kiện: Hệ thống hoạt động bình thường. Dữ liệu công việc đang ở trạng thái hoạt động (Active) và tồn tại trong cơ sở dữ liệu.
+6. Hậu điều kiện: Người dùng xem được đầy đủ thông tin về vị trí tuyển dụng. Người dùng có thể tiếp tục thực hiện hành động nộp hồ sơ (Apply) cho vị trí này.
+7. Điểm mở rộng: Cung cấp nút chia sẻ (Share) để người dùng có thể gửi link công việc qua mạng xã hội hoặc email. Hệ thống gợi ý các công việc tương tự (cùng ngành nghề, mức lương hoặc địa điểm) ở cuối trang chi tiết.
+2.5.15.2 Biểu đồ trình tự
+2.5.15.3 Biểu đồ lớp
+2.5.15.4 Hình dung màn hình
+2.5.16 Use case "Tìm kiếm công việc theo kỹ năng"
+2.5.16.1 Mô tả chi tiết
+1. Tên Use Case: Tìm kiếm công việc theo kỹ năng
+2. Mô tả vắn tắt: Use case cho phép người dùng tra cứu các vị trí tuyển dụng dựa trên từ khóa về kỹ năng chuyên môn.
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Người dùng chọn chức năng tìm kiếm việc làm trên hệ thống.
+Người dùng nhập từ khóa liên quan đến kỹ năng chuyên môn cần tìm.
+Người dùng kích hoạt lệnh tìm kiếm
+Hệ thống tiếp nhận từ khóa, truy xuất cơ sở dữ liệu để tìm các bài đăng tuyển dụng (đang mở) có yêu cầu kỹ năng khớp hoặc gần khớp với từ khóa.
+Hệ thống trả về và hiển thị danh sách các công việc phù hợp.
+Kết thúc use case.
+3.2. Luồng rẽ nhánh:
+Tại bước 4, nếu hệ thống không kết nối được với cơ sở dữ liệu, hiển thị thông báo lỗi kết nối mạng. Use case kết thúc.
+Tại bước 5, nếu không có bất kỳ bài đăng nào khớp với từ khóa kỹ năng mà người dùng đã nhập, hệ thống hiển thị danh sách trống kèm thông báo "Không tìm thấy công việc phù hợp với kỹ năng này". Use case kết thúc.
+4. Các yêu cầu đặc biệt: Tìm kiếm linh hoạt: Hệ thống cần hỗ trợ tìm kiếm không phân biệt chữ hoa/chữ thường (Case-insensitive) và tìm kiếm chuỗi con (Ví dụ: nhập react vẫn trả về kết quả ReactJS hoặc React Native).
+5. Tiền điều kiện: Hệ thống hoạt động bình thường. Cơ sở dữ liệu đã có các bài đăng tuyển dụng được gán sẵn các thẻ (tags) kỹ năng tương ứng.
+6. Hậu điều kiện: Danh sách kết quả hiển thị chính xác các công việc yêu cầu kỹ năng mà người dùng đang quan tâm. Người dùng có thể tiếp tục chọn một kết quả để xem chi tiết hoặc ứng tuyển.
+7. Điểm mở rộng: Gợi ý tự động (Autocomplete/Từ khóa thịnh hành): Khi người dùng bắt đầu gõ, hệ thống có thể thả xuống danh sách gợi ý các kỹ năng phổ biến đang có trong hệ thống để người dùng chọn nhanh. Tìm kiếm kết hợp: Cho phép người dùng kết hợp tìm kiếm kỹ năng với tiêu chí khác như "Địa điểm" để thu hẹp kết quả.
+2.5.16.2 Biểu đồ trình tự
+2.5.16.3 Biểu đồ lớp
+2.5.16.4 Hình dung màn hình
+2.5.17 Use case "Thêm mới công việc"
+2.5.17.1 Mô tả chi tiết
+1. Tên Use Case: Thêm mới công việc (Job)
+2. Mô tả vắn tắt: Use case cho phép Quản trị viên (Admin) và Nhân viên (HR) tạo và đăng tải một vị trí tuyển dụng mới lên hệ thống.
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Quản trị viên/Nhân viên chọn chức năng thêm mới công việc từ giao diện quản lý.
+Hệ thống cung cấp biểu mẫu nhập liệu với các trường thông tin cần thiết cho một bài đăng tuyển dụng.
+Quản trị viên/Nhân viên cung cấp đầy đủ thông tin vào biểu mẫu
+Quản trị viên/Nhân viên xác nhận lưu dữ liệu.
+Hệ thống lưu bản ghi công việc mới vào cơ sở dữ liệu.
+Hệ thống thông báo tạo mới thành công và hiển thị bài đăng vừa tạo trên danh sách quản lý.
+Kết thúc use case.
+3.2. Luồng rẽ nhánh:
+Tại bước 1, nếu người dùng đăng nhập không phải là Admin hoặc Nhân viên (ví dụ: Ứng viên cố tình truy cập vào URL thêm mới), hệ thống sẽ từ chối truy cập và hiển thị thông báo lỗi "Không có quyền thực hiện". Use case kết thúc.
+Tại bước 5, nếu hệ thống phát hiện dữ liệu không hợp lệ, hệ thống chặn quá trình lưu, hiển thị cảnh báo lỗi tại các trường bị sai và yêu cầu chỉnh sửa. Tiến trình tạm dừng.
+Tại bước 5, nếu hệ thống mất kết nối với cơ sở dữ liệu, hiển thị thông báo lỗi xử lý. Dữ liệu trên biểu mẫu được giữ nguyên.
+Tại bất kỳ thời điểm nào trước bước 4, nếu Quản trị viên/Nhân viên hủy thao tác, hệ thống xóa dữ liệu đang nhập dở và quay về màn hình danh sách. Use case kết thúc.
+4. Các yêu cầu đặc biệt: Trường "Công ty trực thuộc" phải truy xuất đúng danh sách công ty đã có. Trường "Kỹ năng" cho phép chọn nhiều giá trị (Multi-select).
+5. Tiền điều kiện: Hệ thống hoạt động bình thường. Người dùng đã đăng nhập và tài khoản bắt buộc phải thuộc vai trò Admin hoặc Nhân viên (HR).
+6. Hậu điều kiện: Bản ghi công việc mới được tạo thành công trong cơ sở dữ liệu. Công việc sẽ hiển thị công khai trên giao diện tìm kiếm của ứng viên (nếu được set trạng thái Active và trong thời hạn).
+7. Điểm mở rộng: Tự động gửi email thông báo có Job mới đến các ứng viên tiềm năng có kỹ năng tương ứng.
+2.5.17.2 Biểu đồ trình tự
+2.5.17.3 Biểu đồ lớp
+2.5.17.4 Hình dung màn hình
+2.5.18 Use case "Cập nhật thông tin công việc"
+2.5.18.1 Mô tả chi tiết
+1. Tên Use Case: Cập nhật thông tin công việc (Job)
+2. Mô tả vắn tắt: Use case cho phép Quản trị viên (Admin) và Nhân viên (HR) chỉnh sửa, thay đổi thông tin của một bài đăng tuyển dụng đã tồn tại trên hệ thống.
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Quản trị viên/Nhân viên chọn chức năng chỉnh sửa tại một công việc cụ thể trên danh sách quản lý công việc.
+Hệ thống truy xuất dữ liệu chi tiết hiện tại của công việc đó từ cơ sở dữ liệu.
+Hệ thống hiển thị biểu mẫu cập nhật với các trường thông tin đã được điền sẵn dữ liệu cũ.
+Quản trị viên/Nhân viên tiến hành thay đổi, bổ sung các thông tin cần thiết trên biểu mẫu.
+Quản trị viên/Nhân viên xác nhận lưu dữ liệu cập nhật.
+Hệ thống tiếp nhận và tiến hành xác thực tính hợp lệ của các dữ liệu mới vừa được chỉnh sửa và nhật các thay đổi vào bản ghi công việc tương ứng trong cơ sở dữ liệu.
+Hệ thống thông báo cập nhật thành công và hiển thị các thông tin mới trên danh sách quản lý.
+Kết thúc use case.
+3.2. Luồng rẽ nhánh:
+Tại bước 1, nếu hệ thống phát hiện bài đăng đã bị xóa khỏi cơ sở dữ liệu (bởi một tài khoản khác cùng thời điểm), hệ thống sẽ thông báo lỗi "Công việc không tồn tại" và làm mới lại danh sách. Use case kết thúc.
+Tại bước 2 hoặc 6, nếu hệ thống không kết nối được với cơ sở dữ liệu, hiển thị thông báo lỗi xử lý. Dữ liệu thay đổi trên biểu mẫu tạm thời được giữ nguyên.
+Tại bước 6, nếu hệ thống phát hiện dữ liệu cập nhật không hợp lệ hệ thống chặn quá trình cập nhật, đánh dấu các trường bị lỗi và yêu cầu người dùng sửa lại.
+Tại bất kỳ thời điểm nào trước bước 5, nếu admin/Nhân viên chọn hủy thao tác, hệ thống sẽ bỏ qua các thay đổi, đóng biểu mẫu. Dữ liệu công việc giữ nguyên trạng thái ban đầu. Use case kết thúc.
+4. Các yêu cầu đặc biệt: Hệ thống phải đảm bảo việc cập nhật trạng thái (Ví dụ: từ Active sang Inactive/Đóng) có tác dụng ngay lập tức, ngăn ứng viên tiếp tục nộp hồ sơ vào công việc này.
+5. Tiền điều kiện: Hệ thống hoạt động bình thường. Người dùng đã đăng nhập với tài khoản có quyền Admin hoặc Nhân viên (HR). Công việc cần cập nhật đang tồn tại trong cơ sở dữ liệu.
+6. Hậu điều kiện: Thông tin công việc được cập nhật thành công vào cơ sở dữ liệu. Mọi thay đổi (như mức lương, mô tả, trạng thái) sẽ được phản ánh ngay lập tức trên giao diện hiển thị cho ứng viên.
+7. Điểm mở rộng: Lưu vết hệ thống (Audit log): Ghi nhận lại tài khoản nào đã thực hiện cập nhật và cập nhật vào thời gian nào để dễ dàng đối soát khi có sự cố dữ liệu.
+2.5.18.2 Biểu đồ trình tự
+2.5.18.3 Biểu đồ lớp
+2.5.18.4 Hình dung màn hình
+2.5.19 Use case "Xem danh sách các skill"
+2.5.19.1 Mô tả chi tiết
+1. Tên Use Case: Xem Danh Sách Skill
+2. Mô tả vắn tắt: Use case này cho phép Admin xem danh sách tất cả các kỹ năng hiện có trên hệ thống.
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Use case bắt đầu khi Admin đăng nhập vào hệ thống và chọn mục "quản lý skill" trên thanh menu điều hướng trang jobs
+Hệ thống thực hiện truy vấn cơ sở dữ liệu để lấy danh sách các kỹ năng.
+Hệ thống hiển thị danh sách Skill dưới dạng bảng
+Use case kết thúc.
+3.2. Luồng rẽ nhánh:
+Tại bước 2 hoặc 3, nếu hệ thống không kết nối được với cơ sở dữ liệu, hệ thống hiển thị thông báo lỗi “Lỗi kết nối hệ thống”. Use case kết thúc.
+Tại bước 4, Admin có thể nhập từ khóa vào ô tìm kiếm. Hệ thống sẽ lọc danh sách và hiển thị các kỹ năng khớp với tên đã nhập.
+4. Các yêu cầu đặc biệt: Không có
+5. Tiền điều kiện: Người dùng phải đăng nhập với quyền Admin.
+6. Hậu điều kiện: Không có
+7. Điểm mở rộng: Không có
+2.5.19.2 Biểu đồ trình tự
+2.5.19.3 Biểu đồ lớp
+2.5.19.4 Hình dung màn hình
+2.5.21 Use case "Xoá skill"
+2.5.21.1 Mô tả chi tiết
+1. Tên Use Case: Xoá Skill
+2. Mô tả vắn tắt: Use case này cho phép Quản trị viên (Admin) loại bỏ một kỹ năng không còn sử dụng ra khỏi hệ thống.
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Use case bắt đầu khi Admin đang ở màn hình "Quản lý Skill"
+Admin tìm kỹ năng cần xoá và nhấn vào nút biểu tượng "Xoá" (tại cột Hành động).
+Hệ thống hiển thị thông báo xác nhận: "Bạn có chắc chắn muốn xoá kỹ năng này không?".
+Admin nhấn nút "Xác nhận".
+Hệ thống thực hiện kiểm tra ràng buộc dữ liệu (xem kỹ năng có đang được gán cho Job hoặc CV nào không).
+Hệ thống thực hiện xoá kỹ năng trong cơ sở dữ liệu và thông báo: "Xoá kỹ năng thành công".
+Hệ thống cập nhật lại danh sách hiển thị.
+Use case kết thúc.
+3.2. Luồng rẽ nhánh:
+Tại bước 3, nếu Admin nhấn "Huỷ", hệ thống đóng thông báo xác nhận và không thực hiện xoá. Use case kết thúc.
+Tại bước 5, nếu kỹ năng đang được sử dụng, hệ thống hiển thị thông báo lỗi: "Không thể xoá kỹ năng này vì đang có dữ liệu liên quan"
+4. Các yêu cầu đặc biệt: Cần kiểm tra ràng buộc giữ liệu, hoặc có cách sử lý với các kỹ năng đã được sử dụng
+5. Tiền điều kiện: Người dùng phải đăng nhập với quyền Admin và đang ở trang quản lý skill
+6. Hậu điều kiện: Kỹ năng bị loại bỏ khỏi cơ sở dữ liệu và không còn xuất hiện trong danh sách lựa chọn khi tạo Job/CV.
+7. Điểm mở rộng: Không có
+2.5.21.2 Biểu đồ trình tự
+2.5.21.3 Biểu đồ lớp
+2.5.21.4 Hình dung màn hình
+2.5.22 Use case "Thêm mới skill"
+2.5.22.1 Mô tả chi tiết
+1. Tên Use Case: Thêm mới Skill
+2. Mô tả vắn tắt: Use case này cho phép Quản trị viên (Admin) bổ sung các kỹ năng công nghệ mới vào hệ thống
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Use case bắt đầu khi Admin đang ở màn hình "Quản lý Skill" và nhấn vào nút "Thêm mới".
+Hệ thống hiển thị một cửa sổ chứa form nhập liệu.
+Admin nhập tên kỹ năng mới và nhấn nút "Lưu".
+Hệ thống thực hiện kiểm tra tính hợp lệ.
+Hệ thống thực hiện lưu dữ liệu vào cơ sở dữ liệu và hiển thị thông báo: "Thêm mới kỹ năng thành công".
+Hệ thống đóng Modal và cập nhật lại danh sách hiển thị.
+Use case kết thúc.
+3.2. Luồng rẽ nhánh:
+Tại bước 2 hoặc 3, nếu Admin nhấn nút "Huỷ" hoặc click ra ngoài Modal, hệ thống đóng cửa sổ và không lưu dữ liệu.
+bước 4, nếu tên kỹ năng bị trống hoặc đã tồn tại, hệ thống hiển thị thông báo lỗi tương ứng và giữ nguyên Modal để Admin chỉnh sửa.
+4. Các yêu cầu đặc biệt: Tên kỹ năng nên được tự động chuyển đổi hoặc kiểm tra để tránh phân biệt chữ hoa/chữ thường
+5. Tiền điều kiện: Người dùng phải đăng nhập với quyền Admin và đang ở trang quản lý skill
+6. Hậu điều kiện: Một bản ghi mới được tạo trong bảng Skills.
+7. Điểm mở rộng: Không có
+2.5.22.2 Biểu đồ trình tự
+2.5.22.3 Biểu đồ lớp
+2.5.22.4 Hình dung màn hình
+2.5.23 Use case "Cập nhật thông tin skill"
+2.5.23.1 Mô tả chi tiết
+1. Tên Use Case: Cập nhật thông tin Skill
+2. Mô tả vắn tắt: Use case này cho phép Quản trị viên (Admin) thay đổi thông tin của một kỹ năng đã tồn tại trên hệ thống
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Use case bắt đầu khi Admin đang ở màn hình "Quản lý Skill"
+Admin tìm kỹ năng cần chỉnh sửa và nhấn vào nút "Sửa" (biểu tượng bút chì) tại dòng tương ứng.
+Hệ thống hiển thị một Modal chứa thông tin hiện tại của kỹ năng đó.
+Admin thực hiện thay đổi tên kỹ năng và nhấn nút "Cập nhật".
+Hệ thống thực hiện kiểm tra tính hợp lệ và lưu thông tin thay đổi vào cơ sở dữ liệu và hiển thị thông báo: "Cập nhật kỹ năng thành công".
+Hệ thống đóng Modal và cập nhật lại danh sách hiển thị. Use case kết thúc.
+3.2. Luồng rẽ nhánh:
+Tại bước 3 hoặc 4, nếu Admin nhấn "Huỷ", hệ thống đóng Modal và giữ nguyên dữ liệu cũ.
+Tại bước 5, nếu Admin đổi tên thành một kỹ năng đã tồn tại, hệ thống báo lỗi: "Tên kỹ năng đã tồn tại" và không cho phép lưu.
+4. Các yêu cầu đặc biệt: Không có
+5. Tiền điều kiện: Người dùng phải đăng nhập với quyền Admin và đang ở trang quản lý skill
+6. Hậu điều kiện: Thông tin kỹ năng được cập nhật mới trong bảng Skills
+7. Điểm mở rộng: Không có
+2.5.23.2 Biểu đồ trình tự
+2.5.23.3 Biểu đồ lớp
+2.5.23.4 Hình dung màn hình
+2.5.24 Use case “Tạo mới resume”
+2.5.24.1 Mô tả chi tiết
+1.Tên Use Case: Tạo mới resume
+2.Mô tả vắn tắt:Use case này cho phép Ứng viên nộp hồ sơ xin việc vào một công việc (Job) cụ thể.
+3.Luồng các sự kiện
+3.1.Luồng cơ bản
+Use case bắt đầu khi người dùng đang xem chi tiết một công việc và nhấn nút "Ứng tuyển".
+Hệ thống hiển thị form nộp hồ sơ, yêu cầu Ứng viên tải lên file CV (định dạng PDF/Word).
+Người dùng nhấn nút "Thêm/Nộp hồ sơ".
+Hệ thống tự động lấy email và user_id từ phiên đăng nhập hiện tại, kết hợp với job_id của công việc đang ứng tuyển.
+Hệ thống lưu đường dẫn file vào trường url, thiết lập status mặc định là PENDING, và lưu bản ghi mới vào bảng Resumes trong CSDL.
+Hệ thống thông báo ứng tuyển thành công. Use case kết thúc.
+3.2. Các luồng rẽ nhánh
+Tại bất kỳ thời điểm nào trong luồng cơ bản, nếu hệ thống không kết nối được với cơ sở dữ liệu, hệ thống hiển thị thông báo lỗi “Lỗi kết nối”. Use case kết thúc.
+Tại bước 3, nếu định dạng file CV không đúng hỗ trợ hoặc vượt quá dung lượng cho phép, hệ thống báo lỗi và yêu cầu chọn lại file.
+Tại bước 4, nếu hệ thống phát hiện user_id này đã có một bản ghi resume với cùng job_id, hệ thống thông báo "Bạn đã ứng tuyển công việc này" và hủy quá trình lưu.
+4.Các yêu cầu đặc biệt: File tải lên cần được lưu trữ trên Cloud và chỉ lưu trữ đường dẫn (url) vào database.
+5.Tiền điều kiện: Ứng viên đã đăng nhập vào hệ thống và công việc  đó đang trong trạng thái active = true (còn hạn nộp).
+6.Hậu điều kiện:
+Thành công: Một bản ghi mới được tạo trong bảng Resumes với trạng thái PENDING.
+Thất bại: Không có bản ghi nào được tạo thêm.
+7.Điểm mở rộng: Không có.
+2.5.24.2 Biểu đồ trình tự
+2.5.24.3 Biểu đồ lớp
+2.5.24.4 Hình dung màn hình
+2.5.25. Use case “Cập nhập thông tin resume”
+2.5.25.1 Mô tả chi tiết
+1.Tên Use Case: Cập nhập thông tin resume
+2.Mô tả vắn tắt:Use case này cho phép người dùng thay đổi các thông tin liên quan đến hồ sơ ứng tuyển. Ứng viên cập nhật nội dung CV (url), trong khi Nhân viên HR hoặc Admin cập nhật trạng thái hồ sơ .
+3.Luồng các sự kiện
+3.1.Luồng cơ bản
+Use case bắt đầu khi người dùng truy cập vào danh sách hoặc chi tiết Resume và nhấn nút "Cập nhật" (hoặc "Sửa").
+Nếu Actor là Ứng viên:
+Hệ thống kiểm tra status của Resume. Nếu là PENDING, hệ thống hiển thị form tải file mới.
+Ứng viên chọn file CV mới và nhấn "Lưu".
+Hệ thống cập nhật trường url trong bảng Resumes.
+Nếu Actor là Nhân viên HR hoặc Admin:
+Hệ thống hiển thị danh sách các trạng thái duyệt.
+HR/Admin chọn trạng thái mới và nhấn "Xác nhận".
+Hệ thống cập nhật trường status tương ứng.
+Hệ thống cập nhật trường status của bản ghi tương ứng trong bảng Resumes. Đồng thời cập nhật trường updated_at và updated_by.
+Hệ thống hiển thị thông báo cập nhật thành công. Use case kết thúc.
+3.2. Các luồng rẽ nhánh
+Tại bước 2.a, nếu status khác PENDING, hệ thống hiển thị thông báo "Hồ sơ đã được tiếp nhận, không thể thay đổi nội dung" và chặn thao tác.
+Tại bước 2.b, nếu file không đúng định dạng hoặc trống, hệ thống báo lỗi yêu cầu kiểm tra lại.
+Người dùng nhấn nút "Hủy", hệ thống giữ nguyên dữ liệu cũ và quay lại trang trước đó.
+4.Các yêu cầu đặc biệt: Việc thay đổi sang trạng thái APPROVED hoặc REJECTED có thể kích hoạt trigger để chuẩn bị gửi email thông báo kết quả cho ứng viên.
+5.Tiền điều kiện: Người dùng (HR/Admin) đã đăng nhập và có quyền chỉnh sửa Resume. Ứng viên chỉ được sửa hồ sơ của chính mình
+6.Hậu điều kiện:
+Thành công: Trạng thái của Resume được thay đổi trong CSDL.
+Thất bại: Trạng thái giữ nguyên.
+7.Điểm mở rộng: Không có
+2.5.25.2 Biểu đồ trình tự
+2.5.25.3 Biểu đồ lớp
+2.5.25.4 Hình dung màn hình
+2.5.26 Use case “Xóa resume”
+2.5.26.1Mô tả chi tiết
+1.Tên Use Case: Xoá resume
+2.Mô tả vắn tắt:Use case cho phép Ứng viên rút lại hồ sơ (xóa resume) nếu hồ sơ chưa được xử lý, hoặc cho phép Admin xóa các hồ sơ rác khỏi hệ thống.
+3.Luồng các sự kiện
+3.1.Luồng cơ bản
+Người dùng chọn một hoặc nhiều Resume từ danh sách và nhấn nút "Xóa" (hoặc "Rút hồ sơ").
+Hệ thống hiển thị hộp thoại cảnh báo: "Bạn có chắc chắn muốn xóa hồ sơ này không?".
+Người dùng nhấn "Đồng ý".
+Hệ thống tìm kiếm bản ghi theo id trong bảng Resumes và thực hiện xóa khỏi cơ sở dữ liệu.
+Hệ thống tải lại danh sách và thông báo xóa thành công. Use case kết thúc.
+3.2. Các luồng rẽ nhánh
+Tại bước 4, nếu ứng viên thực hiện rút hồ sơ nhưng status đã chuyển sang REVIEWING, APPROVED hoặc REJECTED, hệ thống báo lỗi "Không thể rút hồ sơ đã được xử lý" và hủy thao tác..
+Tại bước 3, nếu người dùng chọn "Hủy", hệ thống đóng dropdown và giữ nguyên trạng thái cũ của Resume.
+4.Các yêu cầu đặc biệt: Không có.
+5.Tiền điều kiện: Người dùng đã đăng nhập. Nếu là Ứng viên thì chỉ được xóa resume thuộc user_id của mình.
+6.Hậu điều kiện: Không có
+7.Điểm mở rộng: Không có
+2.5.26.2 Biểu đồ trình tự
+2.5.26.3 Biểu đồ lớp
+2.5.26.4 Hình dung màn hình
+2.5.27 Use case “Lấy thông tin chi tiết resume”
+2.5.27.1 Mô tả chi tiết
+1.Tên Use Case: Lấy thông tin chi tiết resume
+2.Mô tả vắn tắt:Use case cho phép người dùng (Ứng viên, HR, Admin) xem toàn bộ thông tin chi tiết của một hồ sơ cụ thể, bao gồm việc hiển thị file CV PDF, trạng thái và thông tin Job ứng tuyển.
+3.Luồng các sự kiện
+3.1.Luồng cơ bản
+Người dùng click vào một dòng Resume cụ thể trên danh sách hiển thị.
+Hệ thống lấy id của resume đó và truy vấn vào bảng Resumes, kết hợp (Join) với bảng Users và bảng Jobs để lấy toàn bộ thông tin liên quan.
+Hệ thống hiển thị màn hình chi tiết bao gồm: Email ứng viên, trạng thái, tên công việc đã ứng tuyển, thời gian tạo và khung xem trước file CV từ đường dẫn url.
+Người dùng xem thông tin. Use case kết thúc.
+3.2. Các luồng rẽ nhánh
+Tại bước 2, nếu bản ghi đã bị xóa hoặc không tìm thấy id, hệ thống hiển thị trang lỗi 404 "Không tìm thấy hồ sơ".
+4.Các yêu cầu đặc biệt: Không có.
+5.Tiền điều kiện: Người dùng có quyền truy cập vào chức năng xem chi tiết hồ sơ.
+6.Hậu điều kiện: Không có
+7.Điểm mở rộng: Không có
+2.5.27.2 Biểu đồ trình tự
+2.5.27.3 Biểu đồ lớp
+2.5.27.4 Hình dung màn hình
+2.5.28 Use case “Lấy danh sách toàn bộ resume”
+2.5.28.1Mô tả chi tiết
+1.Tên Use Case: Lấy danh sách toàn bộ resume
+2.Mô tả vắn tắt:se case cho phép HR hoặc Admin xem toàn bộ danh sách các hồ sơ ứng tuyển đã được nộp vào hệ thống hoặc nộp vào công ty của họ, hỗ trợ phân trang và bộ lọc.
+3.Luồng các sự kiện
+3.1.Luồng cơ bản
+HR/Admin truy cập vào menu "Quản lý Resume".
+Hệ thống truy xuất dữ liệu từ bảng Resumes. Nếu là HR, hệ thống chỉ lấy các resume nộp vào các job_id thuộc company_id của HR đó.
+Hệ thống trả về danh sách các bản ghi gồm các cột: Tên ứng viên, Email, Tên Job, Ngày nộp , Trạng thái .
+Người dùng xem danh sách. Use case kết thúc.
+3.2. Các luồng rẽ nhánh
+Tại bước 4, người dùng có thể chọn bộ lọc. Hệ thống thực hiện truy vấn lại CSDL theo điều kiện lọc và hiển thị danh sách mới.
+4.Các yêu cầu đặc biệt: Không có.
+5.Tiền điều kiện: Người dùng đăng nhập với vai trò HR hoặc Admin.
+6.Hậu điều kiện: Không có
+7.Điểm mở rộng: Không có
+2.5.28.2 Biểu đồ trình tự
+2.5.28.3 Biểu đồ lớp
+2.5.28.4 Hình dung màn hình
+2.5.29 Use case “Lấy danh sách resume theo user”
+2.5.29.1 Mô tả chi tiết
+1.Tên Use Case: Lấy danh sách resume theo user
+2.Mô tả vắn tắt:Use case cho phép Ứng viên theo dõi lại toàn bộ các công việc mà mình đã nộp CV và xem trạng thái duyệt hiện tại của từng hồ sơ.
+3.Luồng các sự kiện
+3.1.Luồng cơ bản
+Ứng viên truy cập vào mục "Lịch sử ứng tuyển" trên giao diện cá nhân.
+Hệ thống lấy user_id hiện tại đang đăng nhập và truy vấn vào bảng Resumes với điều kiện user_id trùng khớp.
+Hệ thống trả về danh sách các hồ sơ của ứng viên, hiển thị rõ Tên công việc, thời gian ứng tuyển và tiến độ.
+Người dùng xem danh sách. Use case kết thúc.
+3.2. Các luồng rẽ nhánh
+Tại bước 2, nếu truy vấn trả về rỗng, hệ thống hiển thị thông báo "Bạn chưa ứng tuyển công việc nào" kèm theo nút gợi ý "Tìm việc ngay".
+4.Các yêu cầu đặc biệt: Không có.
+5.Tiền điều kiện:Không có.
+6.Hậu điều kiện: Không có
+7.Điểm mở rộng: Không có
+2.5.29.2 Biểu đồ trình tự
+2.5.29.3 Biểu đồ lớp
+2.5.29.4 Hình dung màn hình
+2.5.30 Use case "Tạo mới Subscriber"
+2.5.30.1 Mô tả chi tiết
+1. Tên Use Case: Tạo mới Subscriber (Đăng ký nhận thông báo việc làm)
+2. Mô tả vắn tắt: Use case này cho phép Ứng viên đăng ký nhận email tự động từ hệ thống mỗi khi có công việc mới phù hợp với các kỹ năng (Skills) mà họ quan tâm.
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Use case bắt đầu khi Ứng viên truy cập vào chức năng "Đăng ký nhận việc làm" trên giao diện hệ thống.
+Hệ thống hiển thị biểu mẫu đăng ký bao gồm: Tên, Email (tự động điền nếu đã đăng nhập) và danh sách các Kỹ năng (Skills) để lựa chọn.
+Ứng viên điền thông tương, tích chọn một hoặc nhiều kỹ năng (ví dụ: Java, Spring Boot, React) và nhấn "Đăng ký".
+Hệ thống kiểm tra tính hợp lệ của dữ liệu. Nếu hợp lệ, hệ thống lưu một bản ghi mới vào bảng Subscribers với trạng thái mặc định (ví dụ: APPROVED) và cập nhật bảng trung gian skill_subscribers để lưu quan hệ Many-to-Many.
+Hệ thống hiển thị thông báo "Đăng ký nhận thông báo thành công". Use case kết thúc.
+3.2. Luồng rẽ nhánh:
+Email đã đăng ký: Tại bước 4, nếu hệ thống kiểm tra thấy Email này đã tồn tại trong bảng Subscribers, hệ thống báo lỗi "Email này đã được đăng ký nhận thông báo" và gợi ý chuyển sang trang Cập nhật thông tin.
+Chưa chọn kỹ năng: Nếu ứng viên không chọn bất kỳ Skill nào, hệ thống chặn lại và yêu cầu "Vui lòng chọn ít nhất 1 kỹ năng".
+4. Các yêu cầu đặc biệt: Nếu Ứng viên chưa đăng nhập, hệ thống vẫn có thể cho phép đăng ký dưới dạng Guest (khách) bằng cách chỉ cần lưu email và name mà không bắt buộc có user_id.
+5. Tiền điều kiện: Ứng dụng WorkHub đang hoạt động bình thường.
+6. Hậu điều kiện:
+Thành công: Thông tin Subscriber và các kỹ năng quan tâm được lưu vào hệ thống.
+Thất bại: Không có dữ liệu nào được lưu.
+7. Điểm mở rộng: Không có.
+2.5.30.2 Biểu đồ trình tự
+2.5.30.3 Biểu đồ lớp
+2.5.30.4 Hình dung màn hình
+2.5.31 Use case "Cập nhật thông tin subscriber"
+2.5.31.1 Mô tả chi tiết
+1. Tên Use Case: Cập nhật thông tin subscriber
+2. Mô tả vắn tắt: Use case cho phép Ứng viên thay đổi danh sách các kỹ năng muốn nhận thông báo hoặc hủy đăng ký (ngừng nhận email) từ hệ thống.
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Ứng viên truy cập vào mục "Quản lý thông báo việc làm" trong phần hồ sơ cá nhân.
+Hệ thống truy xuất dữ liệu từ bảng Subscribers và hiển thị danh sách các Kỹ năng đang theo dõi hiện tại.
+Ứng viên thực hiện thay đổi: thêm kỹ năng mới, xóa bớt kỹ năng cũ, hoặc thay đổi Email nhận thông báo, sau đó nhấn "Cập nhật".
+Hệ thống cập nhật thông tin trong bảng Subscribers và ghi đè danh sách kỹ năng trong bảng trung gian. Hệ thống lưu lại thời gian updated_at.
+Hệ thống thông báo cập nhật thành công. Use case kết thúc.
+3.2. Luồng rẽ nhánh:
+Hủy đăng ký (Unsubscribe): Tại bước 3, ứng viên nhấn nút "Hủy nhận thông báo". Hệ thống sẽ chuyển trạng thái (status) của bản ghi trong bảng Subscribers sang REJECTED (hoặc INACTIVE) thay vì xóa cứng. Từ nay hệ thống sẽ ngừng gửi email.
+4. Các yêu cầu đặc biệt: Trong các email thông báo gửi đi luôn phải đính kèm một đường link "Hủy đăng ký". Khi click vào link này, hệ thống tự động gọi API chuyển trạng thái thành ngưng hoạt động mà không cần ứng viên phải đăng nhập.
+5. Tiền điều kiện: Ứng viên đã có bản ghi đăng ký trong bảng Subscribers.
+6. Hậu điều kiện: Dữ liệu về danh sách kỹ năng quan tâm hoặc trạng thái nhận mail được cập nhật.
+7. Điểm mở rộng: Không có.
+2.5.31.2 Biểu đồ trình tự
+2.5.31.3 Biểu đồ lớp
+2.5.31.4 Hình dung màn hình
+2.5.32 Use case "Gửi cron email thông báo việc làm theo skill"
+2.5.32.1 Mô tả chi tiết
+1. Tên Use Case: Gửi cron email thông báo việc làm theo skill
+2. Mô tả vắn tắt: Use case này chạy ngầm (background job) theo một chu kỳ thời gian nhất định (ví dụ: hàng ngày, hàng tuần). Hệ thống sẽ tự động quét các công việc (Jobs) mới và gửi email tổng hợp cho các Subscribers có kỹ năng phù hợp.
+3. Luồng các sự kiện:
+3.1. Luồng cơ bản:
+Use case bắt đầu khi đến thời điểm đã được lập lịch (ví dụ: 8h00 sáng mỗi ngày), hệ thống (Cron Job) tự động kích hoạt tiến trình.
+Hệ thống truy vấn bảng Subscribers để lấy danh sách tất cả các tài khoản đang có trạng thái kích hoạt nhận mail (status hợp lệ).
+Với mỗi Subscriber, hệ thống lấy danh sách các Skills họ đã đăng ký.
+Hệ thống truy vấn bảng Jobs để tìm các công việc mới được đăng (ví dụ trong 24h qua) có active = true và chứa các kỹ năng khớp với danh sách ở bước 3.
+Hệ thống kết xuất dữ liệu các Jobs tìm được vào một khuôn mẫu email (Email Template).
+Hệ thống sử dụng dịch vụ SMTP (ví dụ: Gmail SMTP, SendGrid) để gửi email đến địa chỉ của Subscriber.
+Hệ thống lặp lại quá trình cho đến khi duyệt hết danh sách Subscriber. Hệ thống ghi log (lưu vết) tiến trình hoàn tất. Use case kết thúc.
+3.2. Luồng rẽ nhánh:
+Không có Job mới phù hợp: Tại bước 4, nếu không tìm thấy Job nào khớp với kỹ năng của Subscriber đó, hệ thống sẽ bỏ qua và không gửi email cho người đó, tiếp tục xét đến người tiếp theo.
+Lỗi gửi Email: Tại bước 6, nếu việc gọi dịch vụ SMTP bị lỗi (mất mạng, từ chối kết nối), hệ thống bắt lỗi (catch exception), ghi vào file log và tiếp tục gửi cho người kế tiếp mà không làm sập toàn bộ tiến trình.
+4. Các yêu cầu đặc biệt: Tiến trình này nên chạy dưới dạng bất đồng bộ (Asynchronous) hoặc dùng Message Queue (như RabbitMQ/Kafka) nếu số lượng người đăng ký lớn để tránh quá tải Server. Nội dung email phải chứa nút "Hủy đăng ký" (Unsubscribe).
+5. Tiền điều kiện: Máy chủ và dịch vụ gửi Mail (SMTP) hoạt động ổn định. Cấu hình Cron expression (ví dụ: 0 0 8 * * ? trong Quartz/Spring Scheduler) đã được thiết lập đúng.
+6. Hậu điều kiện: Email được gửi đến hàng loạt ứng viên.
+7. Điểm mở rộng: Có thể thiết kế thêm giao diện cho Admin để cấu hình thời gian chạy Cron Job (thay vì code cứng).
+2.5.32.2 Biểu đồ trình tự
+2.5.32.3 Biểu đồ lớp
+2.5.32.4 Hình dung màn hình

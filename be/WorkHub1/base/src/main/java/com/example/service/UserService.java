@@ -130,6 +130,18 @@ public class UserService {
             user.company = company;
         }
 
+        // Update role if provided and valid (Only Admin can change role)
+        if (request.role != null && !request.role.isEmpty()) {
+            User currentUser = userRepository.findById(currentUserId);
+            if (currentUser == null || !"ROLE_ADMIN".equals(currentUser.role.name)) {
+                throw new AppException(403, "Only administrators can change user roles");
+            }
+
+            Role newRole = roleRepository.findByName(request.role)
+                    .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND.code, ErrorCode.ROLE_NOT_FOUND.message));
+            user.role = newRole;
+        }
+
         // Change password if provided
         if (request.newPassword != null) {
             user.password = BCrypt.hashpw(request.newPassword, BCrypt.gensalt());

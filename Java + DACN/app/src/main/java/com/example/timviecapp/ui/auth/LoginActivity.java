@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Auto-login: Nếu đã có token, chuyển thẳng đến MainActivity
+
         if (TokenManager.isLoggedIn()) {
             navigateToMain();
             return;
@@ -85,7 +85,17 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                     navigateToMain();
                 } else {
-                    Toast.makeText(this, "Email hoặc mật khẩu không chính xác!", Toast.LENGTH_SHORT).show();
+                    String errorMsg = "Email hoặc mật khẩu không chính xác!";
+                    if (response != null && response.getError() != null) {
+                        int errCode = response.getError().getCode();
+                        if (errCode == 2011 || errCode == 2010) {
+                            errorMsg = "Tài khoản của bạn đã bị khóa!";
+                        } else if (response.getError().getMessage() != null && !response.getError().getMessage().isEmpty()) {
+                            // If the backend has a custom error message, we can show it
+                            errorMsg = response.getError().getMessage();
+                        }
+                    }
+                    Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
                 }
             });
         });

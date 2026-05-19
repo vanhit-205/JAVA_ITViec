@@ -112,4 +112,26 @@ public class CompanyRepository {
 
         return data;
     }
+
+    public LiveData<ApiResponse<CompanyResponse>> updateCompany(int id, com.example.timviecapp.models.company.CompanyRequest request) {
+        MutableLiveData<ApiResponse<CompanyResponse>> data = new MutableLiveData<>();
+        apiService.updateCompany(id, request).enqueue(new Callback<ApiResponse<CompanyResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<CompanyResponse>> call, Response<ApiResponse<CompanyResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    data.setValue(response.body());
+                } else {
+                    Log.e(TAG, "updateCompany failed: " + response.code());
+                    data.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<CompanyResponse>> call, Throwable t) {
+                Log.e(TAG, "updateCompany error: " + t.getMessage());
+                data.setValue(null);
+            }
+        });
+        return data;
+    }
 }

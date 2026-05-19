@@ -18,7 +18,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     public interface OnUserActionListener {
         void onLockUnlock(UserResponse user);
-        void onEnableDisable(UserResponse user);
         void onChangeRole(UserResponse user);
     }
 
@@ -83,16 +82,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
             // Set Status Badge
             boolean isLocked = user.isLocked() != null ? user.isLocked() : false;
-            boolean isEnabled = user.isEnabled() != null ? user.isEnabled() : true;
 
             if (isLocked) {
                 binding.tvUserStatus.setText("LOCKED");
                 binding.tvUserStatus.setBackgroundColor(android.graphics.Color.parseColor("#FFF3E0"));
                 binding.tvUserStatus.setTextColor(android.graphics.Color.parseColor("#E65100"));
-            } else if (!isEnabled) {
-                binding.tvUserStatus.setText("DISABLED");
-                binding.tvUserStatus.setBackgroundColor(android.graphics.Color.parseColor("#ECEFF1"));
-                binding.tvUserStatus.setTextColor(android.graphics.Color.parseColor("#37474F"));
             } else {
                 binding.tvUserStatus.setText("ACTIVE");
                 binding.tvUserStatus.setBackgroundColor(android.graphics.Color.parseColor("#E8F5E9"));
@@ -103,7 +97,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 PopupMenu popup = new PopupMenu(v.getContext(), v);
                 
                 popup.getMenu().add(isLocked ? "Mở khóa tài khoản" : "Khóa tài khoản");
-                popup.getMenu().add(isEnabled ? "Vô hiệu hóa tài khoản" : "Kích hoạt tài khoản");
                 popup.getMenu().add("Thay đổi Vai trò (Role)");
 
                 popup.setOnMenuItemClickListener(item -> {
@@ -111,9 +104,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                     String title = item.getTitle().toString();
                     if (title.contains("khóa") || title.contains("Khóa")) {
                         listener.onLockUnlock(user);
-                        return true;
-                    } else if (title.contains("hiệu hóa") || title.contains("Kích hoạt")) {
-                        listener.onEnableDisable(user);
                         return true;
                     } else if (title.contains("Vai trò")) {
                         listener.onChangeRole(user);

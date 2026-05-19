@@ -58,11 +58,6 @@ public class UserManagementActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onEnableDisable(UserResponse user) {
-                performEnableDisable(user);
-            }
-
-            @Override
             public void onChangeRole(UserResponse user) {
                 showChangeRoleDialog(user);
             }
@@ -147,34 +142,6 @@ public class UserManagementActivity extends AppCompatActivity {
         }
     }
 
-    private void performEnableDisable(UserResponse user) {
-        boolean isEnabled = user.isEnabled() != null ? user.isEnabled() : true;
-        binding.progressBar.setVisibility(View.VISIBLE);
-
-        if (isEnabled) {
-            viewModel.disableUser(user.getId()).observe(this, response -> {
-                binding.progressBar.setVisibility(View.GONE);
-                viewModel.setLoading(false);
-                if (response != null && response.isSuccess()) {
-                    Toast.makeText(this, "Vô hiệu hóa tài khoản thành công", Toast.LENGTH_SHORT).show();
-                    loadUsers();
-                } else {
-                    Toast.makeText(this, "Vô hiệu hóa tài khoản thất bại", Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            viewModel.enableUser(user.getId()).observe(this, response -> {
-                binding.progressBar.setVisibility(View.GONE);
-                viewModel.setLoading(false);
-                if (response != null && response.isSuccess()) {
-                    Toast.makeText(this, "Kích hoạt tài khoản thành công", Toast.LENGTH_SHORT).show();
-                    loadUsers();
-                } else {
-                    Toast.makeText(this, "Kích hoạt tài khoản thất bại", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
 
     private void showChangeRoleDialog(UserResponse user) {
         String[] roles = {"ROLE_ADMIN", "ROLE_RECRUITER", "ROLE_CANDIDATE"};

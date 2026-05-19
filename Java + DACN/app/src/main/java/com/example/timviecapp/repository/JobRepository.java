@@ -125,4 +125,24 @@ public class JobRepository {
         
         return jobData;
     }
+
+    public LiveData<ApiResponse<JobResponse>> updateJob(int id, com.example.timviecapp.models.job.JobRequest request) {
+        MutableLiveData<ApiResponse<JobResponse>> jobData = new MutableLiveData<>();
+        jobApiService.updateJob(id, request).enqueue(new Callback<ApiResponse<JobResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<JobResponse>> call, Response<ApiResponse<JobResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    jobData.setValue(response.body());
+                } else {
+                    jobData.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<JobResponse>> call, Throwable t) {
+                jobData.setValue(null);
+            }
+        });
+        return jobData;
+    }
 }

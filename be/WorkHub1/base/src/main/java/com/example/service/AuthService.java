@@ -64,20 +64,10 @@ public class AuthService {
             throw new AppException(ErrorCode.EMAIL_EXISTS.code, ErrorCode.EMAIL_EXISTS.message);
         }
 
-        // Determine role (default to ROLE_CANDIDATE if not specified)
-        String roleName = request.role;
-        if (roleName == null || roleName.isEmpty()) {
-            roleName = RoleConstant.ROLE_CANDIDATE.name();
-        } else {
-            if (!roleName.startsWith("ROLE_")) {
-                roleName = "ROLE_" + roleName.toUpperCase();
-            }
-        }
-
-        final String finalRoleName = roleName;
-        var role = roleRepository.findByName(finalRoleName)
-                .orElseGet(() -> roleRepository.findByName(RoleConstant.ROLE_CANDIDATE.name())
-                        .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND.code, ErrorCode.ROLE_NOT_FOUND.message)));
+        // Ép buộc vai trò mặc định là ROLE_CANDIDATE khi đăng ký mới
+        String roleName = RoleConstant.ROLE_CANDIDATE.name();
+        var role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND.code, ErrorCode.ROLE_NOT_FOUND.message));
 
         // Create user
         User user = new User();

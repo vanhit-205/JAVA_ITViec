@@ -4,7 +4,7 @@ public class ApiResponse<T> {
     private boolean success;
     private Meta meta;
     private T data;
-    private Object error;
+    private ErrorResponse error;
     private String timestamp;
 
     public boolean isSuccess() {
@@ -31,11 +31,11 @@ public class ApiResponse<T> {
         this.data = data;
     }
 
-    public Object getError() {
+    public ErrorResponse getError() {
         return error;
     }
 
-    public void setError(Object error) {
+    public void setError(ErrorResponse error) {
         this.error = error;
     }
 

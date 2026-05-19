@@ -107,33 +107,7 @@
                         android:inputType="textPassword" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="Vai trò"
-                    android:textStyle="bold" />
 
-                <RadioGroup
-                    android:id="@+id/rgRole"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:orientation="vertical">
-
-                    <RadioButton
-                        android:id="@+id/rbCandidate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:text="Ứng viên (Tìm việc)" />
-
-                    <RadioButton
-                        android:id="@+id/rbRecruiter"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nhà tuyển dụng (Đăng tin)" />
-                </RadioGroup>
 
                 <Button
                     android:id="@+id/btnRegister"

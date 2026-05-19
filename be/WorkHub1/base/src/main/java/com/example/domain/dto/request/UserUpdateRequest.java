@@ -30,4 +30,6 @@ public class UserUpdateRequest {
     public String address;
 
     public Long companyId; // Optional - for RECRUITER role
+
+    public String role; // Optional - only admin can change role
 }

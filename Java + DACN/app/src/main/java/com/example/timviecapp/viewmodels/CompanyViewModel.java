@@ -43,6 +43,11 @@ public class CompanyViewModel extends ViewModel {
         return companyRepository.createCompany(request);
     }
 
+    public LiveData<ApiResponse<CompanyResponse>> updateCompany(int id, com.example.timviecapp.models.company.CompanyRequest request) {
+        isLoading.setValue(true);
+        return companyRepository.updateCompany(id, request);
+    }
+
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }

@@ -48,11 +48,34 @@ public class CompanyDetailActivity extends AppCompatActivity {
 
         setupToolbar();
         setupJobsList();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         loadCompanyDetail();
     }
 
     private void setupToolbar() {
         binding.toolbar.setNavigationOnClickListener(v -> onBackPressed());
+
+        // Thêm nút Sửa công ty cho Admin/Recruiter/Employer
+        String role = com.example.timviecapp.utils.TokenManager.getUserRole();
+        if (role != null && (role.toUpperCase().contains("ADMIN") || role.toUpperCase().contains("RECRUITER") || role.toUpperCase().contains("EMPLOYER"))) {
+            binding.toolbar.getMenu().add(0, 101, 0, "Sửa")
+                .setIcon(android.R.drawable.ic_menu_edit)
+                .setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_ALWAYS);
+            
+            binding.toolbar.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == 101) {
+                    Intent intent = new Intent(this, CreateCompanyActivity.class);
+                    intent.putExtra("companyId", companyId);
+                    startActivity(intent);
+                    return true;
+                }
+                return false;
+            });
+        }
     }
 
     private void setupJobsList() {

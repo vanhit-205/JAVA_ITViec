@@ -13,7 +13,11 @@ public class UserResponse {
     private String age;
     private String gender;
     private String address;
-    private Boolean isLocked;
+
+    @SerializedName("accountNonLocked")
+    private Boolean accountNonLocked;
+
+    @SerializedName("enabled")
     private Boolean isEnabled;
 
     public int getId() {
@@ -57,15 +61,15 @@ public class UserResponse {
     }
 
     public Boolean isLocked() {
-        return isLocked;
+        return accountNonLocked != null ? !accountNonLocked : false;
     }
 
     public void setLocked(Boolean locked) {
-        isLocked = locked;
+        this.accountNonLocked = locked != null ? !locked : true;
     }
 
     public Boolean isEnabled() {
-        return isEnabled;
+        return isEnabled != null ? isEnabled : true;
     }
 
     public void setEnabled(Boolean enabled) {

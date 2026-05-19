@@ -87,7 +87,8 @@ public class UserResource {
         log.info("Lock user: " + id);
         Long currentUserId = securityContext.getCurrentUserId();
         userService.lock(id, currentUserId);
-        return Response.ok(BaseResponse.success("User locked successfully", 200, "/api/v1/users/" + id + "/lock"))
+        UserResponse user = userService.getById(id);
+        return Response.ok(BaseResponse.success(user, 200, "/api/v1/users/" + id + "/lock"))
                 .build();
     }
 
@@ -98,7 +99,8 @@ public class UserResource {
         log.info("Unlock user: " + id);
         Long currentUserId = securityContext.getCurrentUserId();
         userService.unlock(id, currentUserId);
-        return Response.ok(BaseResponse.success("User unlocked successfully", 200, "/api/v1/users/" + id + "/unlock"))
+        UserResponse user = userService.getById(id);
+        return Response.ok(BaseResponse.success(user, 200, "/api/v1/users/" + id + "/unlock"))
                 .build();
     }
 

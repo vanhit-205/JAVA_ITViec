@@ -27,7 +27,6 @@ public class AuthRepository {
     public LiveData<ApiResponse<LoginResponse>> login(String email, String password) {
         MutableLiveData<ApiResponse<LoginResponse>> loginData = new MutableLiveData<>();
         
-        // Đảm bảo truyền đúng email vào LoginRequest
         authApiService.login(new LoginRequest(email, password)).enqueue(new Callback<ApiResponse<LoginResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {
@@ -35,14 +34,22 @@ public class AuthRepository {
                     loginData.setValue(response.body());
                 } else {
                     Log.e(TAG, "Login failed. Code: " + response.code());
+                    ApiResponse<LoginResponse> errorResponse = new ApiResponse<>();
+                    errorResponse.setSuccess(false);
                     try {
                         if (response.errorBody() != null) {
-                            Log.e(TAG, "Login Error body: " + response.errorBody().string());
+                            String errorStr = response.errorBody().string();
+                            Log.e(TAG, "Login Error body: " + errorStr);
+                            
+                            // Parse the flat JSON directly into the client-side ErrorResponse class
+                            com.example.timviecapp.models.common.ErrorResponse clientError = 
+                                    new com.google.gson.Gson().fromJson(errorStr, com.example.timviecapp.models.common.ErrorResponse.class);
+                            errorResponse.setError(clientError);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    loginData.setValue(null);
+                    loginData.setValue(errorResponse);
                 }
             }
 

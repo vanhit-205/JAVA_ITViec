@@ -64,6 +64,14 @@ public class JobViewModel extends ViewModel {
         return jobRepository.getJobsByCompany(companyId, page, size);
     }
 
+    /**
+     * UC: Cập nhật thông tin công việc
+     */
+    public LiveData<ApiResponse<JobResponse>> updateJob(int id, com.example.timviecapp.models.job.JobRequest request) {
+        isLoading.setValue(true);
+        return jobRepository.updateJob(id, request);
+    }
+
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }

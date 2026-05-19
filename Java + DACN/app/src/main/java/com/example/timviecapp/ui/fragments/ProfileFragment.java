@@ -16,6 +16,7 @@ import com.example.timviecapp.databinding.FragmentProfileBinding;
 import com.example.timviecapp.models.user.UpdateUserRequest;
 import com.example.timviecapp.ui.admin.SkillManagementActivity;
 import com.example.timviecapp.ui.admin.UserManagementActivity;
+import com.example.timviecapp.ui.admin.ManageRoleUpgradesActivity;
 import com.example.timviecapp.ui.auth.LoginActivity;
 import com.example.timviecapp.ui.companies.ManageCompanyActivity;
 import com.example.timviecapp.ui.jobs.ManageJobsActivity;
@@ -87,13 +88,16 @@ public class ProfileFragment extends Fragment {
             if (role.toUpperCase().contains("ADMIN")) {
                 binding.btnManageSkills.setVisibility(View.VISIBLE);
                 binding.btnManageUsers.setVisibility(View.VISIBLE);
+                binding.btnManageRoleUpgrades.setVisibility(View.VISIBLE);
             } else {
                 binding.btnManageSkills.setVisibility(View.GONE);
                 binding.btnManageUsers.setVisibility(View.GONE);
+                binding.btnManageRoleUpgrades.setVisibility(View.GONE);
             }
         } else {
             binding.layoutAdminPanel.setVisibility(View.GONE);
             binding.layoutCandidatePanel.setVisibility(View.VISIBLE);
+            checkUpgradeRequestStatus();
         }
     }
 
@@ -175,6 +179,10 @@ public class ProfileFragment extends Fragment {
             startActivity(new Intent(getContext(), SubscriberActivity.class));
         });
 
+        binding.btnRequestUpgrade.setOnClickListener(v -> {
+            showUpgradeRequestDialog();
+        });
+
         // Navigation listeners for Admin Panel
         binding.btnManageJobs.setOnClickListener(v -> {
             startActivity(new Intent(getContext(), ManageJobsActivity.class));
@@ -196,6 +204,10 @@ public class ProfileFragment extends Fragment {
             startActivity(new Intent(getContext(), UserManagementActivity.class));
         });
 
+        binding.btnManageRoleUpgrades.setOnClickListener(v -> {
+            startActivity(new Intent(getContext(), ManageRoleUpgradesActivity.class));
+        });
+
         binding.btnLogout.setOnClickListener(v -> logout());
     }
 
@@ -207,6 +219,64 @@ public class ProfileFragment extends Fragment {
         if (getActivity() != null) {
             getActivity().finish();
         }
+    }
+
+    private void checkUpgradeRequestStatus() {
+        viewModel.getMyRequest().observe(getViewLifecycleOwner(), response -> {
+            viewModel.setLoading(false);
+            if (response != null && response.isSuccess() && response.getData() != null) {
+                String status = response.getData().getStatus();
+                if ("PENDING".equals(status)) {
+                    binding.btnRequestUpgrade.setText("⏳ Đang chờ Admin xét duyệt...");
+                    binding.btnRequestUpgrade.setEnabled(false);
+                } else if ("REJECTED".equals(status)) {
+                    String reason = response.getData().getAdminNotes();
+                    if (reason == null || reason.isEmpty()) {
+                        reason = "Không rõ lý do";
+                    }
+                    binding.btnRequestUpgrade.setText("❌ Từ chối (Gửi lại yêu cầu nâng cấp)");
+                    binding.btnRequestUpgrade.setEnabled(true);
+                    Toast.makeText(getContext(), "Yêu cầu nâng cấp bị từ chối: " + reason, Toast.LENGTH_LONG).show();
+                } else {
+                    binding.btnRequestUpgrade.setText("🚀 Nâng cấp lên tài khoản tuyển dụng");
+                    binding.btnRequestUpgrade.setEnabled(true);
+                }
+            } else {
+                binding.btnRequestUpgrade.setText("🚀 Nâng cấp lên tài khoản tuyển dụng");
+                binding.btnRequestUpgrade.setEnabled(true);
+            }
+        });
+    }
+
+    private void showUpgradeRequestDialog() {
+        android.view.View dialogView = LayoutInflater.from(getContext()).inflate(com.example.timviecapp.R.layout.dialog_request_upgrade, null);
+        com.google.android.material.textfield.TextInputEditText etCompany = dialogView.findViewById(com.example.timviecapp.R.id.etCompanyName);
+        com.google.android.material.textfield.TextInputEditText etReason = dialogView.findViewById(com.example.timviecapp.R.id.etReason);
+
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(getContext())
+                .setTitle("Nâng cấp tài khoản tuyển dụng")
+                .setView(dialogView)
+                .setPositiveButton("Gửi yêu cầu", (dialog, which) -> {
+                    String companyName = etCompany.getText().toString().trim();
+                    String reason = etReason.getText().toString().trim();
+
+                    if (companyName.isEmpty() || reason.isEmpty()) {
+                        Toast.makeText(getContext(), "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    viewModel.requestUpgrade(companyName, reason).observe(getViewLifecycleOwner(), response -> {
+                        viewModel.setLoading(false);
+                        if (response != null && response.isSuccess()) {
+                            Toast.makeText(getContext(), "Gửi yêu cầu thành công!", Toast.LENGTH_SHORT).show();
+                            checkUpgradeRequestStatus();
+                        } else {
+                            Toast.makeText(getContext(), "Gửi yêu cầu thất bại!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
     }
 
     private void observeViewModel() {

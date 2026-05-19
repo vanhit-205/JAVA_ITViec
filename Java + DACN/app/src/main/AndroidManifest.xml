@@ -45,6 +45,7 @@
         <activity android:name=".ui.companies.CreateCompanyActivity" />
         <activity android:name=".ui.admin.SkillManagementActivity" />
         <activity android:name=".ui.admin.UserManagementActivity" />
+        <activity android:name=".ui.admin.ManageRoleUpgradesActivity" />
         
     </application>
 

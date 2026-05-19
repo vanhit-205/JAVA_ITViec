@@ -168,6 +168,17 @@
                 android:textColor="@color/black"
                 android:textSize="14sp" />
 
+            <!-- Nút Yêu cầu nâng cấp lên Nhà tuyển dụng -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRequestUpgrade"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="🚀 Nâng cấp lên tài khoản tuyển dụng"
+                android:textAlignment="viewStart"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
         </LinearLayout>
 
         <!-- Bảng điều khiển Quản trị (Admin Panel) -->
@@ -241,6 +252,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:text="👤 Quản lý người dùng"
+                android:textAlignment="viewStart"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <!-- Nút Duyệt yêu cầu nâng cấp vai trò (ADMIN ONLY) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnManageRoleUpgrades"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="👑 Duyệt yêu cầu nâng cấp vai trò"
                 android:textAlignment="viewStart"
                 android:textColor="@color/black"
                 android:textSize="14sp"

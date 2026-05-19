@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.timviecapp.databinding.ActivityAddJobBinding;
 import com.example.timviecapp.models.job.JobRequest;
+import com.example.timviecapp.models.job.JobResponse;
 import com.example.timviecapp.viewmodels.JobViewModel;
 
 import java.text.SimpleDateFormat;
@@ -19,6 +20,8 @@ import java.util.Locale;
 public class AddJobActivity extends AppCompatActivity {
     private ActivityAddJobBinding binding;
     private JobViewModel viewModel;
+    private int jobId = -1;
+    private boolean isEditMode = false;
 
     private final java.util.Calendar startCalendar = java.util.Calendar.getInstance();
     private final java.util.Calendar endCalendar = java.util.Calendar.getInstance();
@@ -33,10 +36,23 @@ public class AddJobActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(JobViewModel.class);
 
+        // Check if we are in Edit Mode
+        jobId = getIntent().getIntExtra("jobId", -1);
+        isEditMode = jobId != -1;
+
         setupToolbar();
-        setupDefaultDates();
         setupListeners();
         observeViewModel();
+
+        if (isEditMode) {
+            binding.toolbar.setTitle("Sửa công việc");
+            binding.btnSave.setText("Cập nhật");
+            loadJobDetails();
+        } else {
+            binding.toolbar.setTitle("Thêm công việc");
+            binding.btnSave.setText("Lưu");
+            setupDefaultDates();
+        }
     }
 
     private void setupToolbar() {
@@ -48,6 +64,46 @@ public class AddJobActivity extends AppCompatActivity {
         endCalendar.add(java.util.Calendar.DAY_OF_MONTH, 30);
         binding.etStartDate.setText(displayDateFormat.format(startCalendar.getTime()));
         binding.etEndDate.setText(displayDateFormat.format(endCalendar.getTime()));
+    }
+
+    private void loadJobDetails() {
+        binding.progressBar.setVisibility(View.VISIBLE);
+        viewModel.getJobById(jobId).observe(this, response -> {
+            binding.progressBar.setVisibility(View.GONE);
+            viewModel.setLoading(false);
+            if (response != null && response.isSuccess() && response.getData() != null) {
+                JobResponse job = response.getData();
+                binding.etName.setText(job.getName());
+                binding.etLocation.setText(job.getLocation());
+                binding.etSalary.setText(String.valueOf(job.getSalary()));
+                binding.etQuantity.setText(String.valueOf(job.getQuantity()));
+                binding.etLevel.setText(job.getLevel());
+                if (job.getCompany() != null) {
+                    binding.etCompanyId.setText(String.valueOf(job.getCompany().getId()));
+                }
+                binding.etDescription.setText(job.getDescription());
+
+                // Parse dates and set calendars
+                try {
+                    SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+                    parser.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+                    if (job.getStartDate() != null) {
+                        Date start = parser.parse(job.getStartDate());
+                        startCalendar.setTime(start);
+                        binding.etStartDate.setText(displayDateFormat.format(start));
+                    }
+                    if (job.getEndDate() != null) {
+                        Date end = parser.parse(job.getEndDate());
+                        endCalendar.setTime(end);
+                        binding.etEndDate.setText(displayDateFormat.format(end));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(this, "Không thể tải chi tiết công việc", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showDatePicker(java.util.Calendar calendar, android.widget.EditText editText) {
@@ -90,15 +146,30 @@ public class AddJobActivity extends AppCompatActivity {
                     startDate, endDate, true, companyId, new ArrayList<>()
             );
 
-            viewModel.createJob(request).observe(this, response -> {
-                viewModel.setLoading(false);
-                if (response != null && response.isSuccess()) {
-                    Toast.makeText(this, "Thêm công việc thành công!", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(this, "Lỗi khi thêm công việc", Toast.LENGTH_SHORT).show();
-                }
-            });
+            binding.progressBar.setVisibility(View.VISIBLE);
+            if (isEditMode) {
+                viewModel.updateJob(jobId, request).observe(this, response -> {
+                    viewModel.setLoading(false);
+                    binding.progressBar.setVisibility(View.GONE);
+                    if (response != null && response.isSuccess()) {
+                        Toast.makeText(this, "Cập nhật công việc thành công!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(this, "Lỗi khi cập nhật công việc", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                viewModel.createJob(request).observe(this, response -> {
+                    viewModel.setLoading(false);
+                    binding.progressBar.setVisibility(View.GONE);
+                    if (response != null && response.isSuccess()) {
+                        Toast.makeText(this, "Thêm công việc thành công!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(this, "Lỗi khi thêm công việc", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         });
     }
 

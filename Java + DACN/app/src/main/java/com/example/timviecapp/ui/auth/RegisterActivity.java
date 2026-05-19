@@ -33,7 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
             String password = binding.etPassword.getText().toString().trim();
             String confirmPassword = binding.etConfirmPassword.getText().toString().trim();
             
-            String role = binding.rbCandidate.isChecked() ? "ROLE_CANDIDATE" : "ROLE_RECRUITER";
+            String role = "ROLE_CANDIDATE";
 
             if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();

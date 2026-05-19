@@ -56,24 +56,6 @@ public class JobDetailActivity extends AppCompatActivity {
 
     private void setupListeners() {
         binding.toolbar.setNavigationOnClickListener(v -> onBackPressed());
-
-        // UC24: Nút ứng tuyển - Navigate đến ApplyJobActivity
-        binding.btnApply.setOnClickListener(v -> {
-            if (!TokenManager.isLoggedIn()) {
-                Toast.makeText(this, "Vui lòng đăng nhập để ứng tuyển", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (currentJob != null) {
-                Intent intent = new Intent(this, ApplyJobActivity.class);
-                intent.putExtra(ApplyJobActivity.EXTRA_JOB_ID, currentJob.getId());
-                intent.putExtra(ApplyJobActivity.EXTRA_JOB_TITLE, currentJob.getName());
-                if (currentJob.getCompany() != null) {
-                    intent.putExtra(ApplyJobActivity.EXTRA_COMPANY_NAME, currentJob.getCompany().getName());
-                }
-                startActivity(intent);
-            }
-        });
     }
 
     private void loadJobDetails() {
@@ -115,18 +97,44 @@ public class JobDetailActivity extends AppCompatActivity {
             }
         }
 
-        // Phân quyền hiển thị nút Ứng tuyển theo Role
+        // Phân quyền hiển thị nút Ứng tuyển/Sửa theo Role
         String role = TokenManager.getUserRole();
         if (role != null && (role.toUpperCase().contains("ADMIN") || role.toUpperCase().contains("RECRUITER") || role.toUpperCase().contains("EMPLOYER"))) {
-            binding.btnApply.setVisibility(View.GONE);
+            binding.btnApply.setVisibility(View.VISIBLE);
+            binding.btnApply.setEnabled(true);
+            binding.btnApply.setText("Sửa công việc");
+            binding.btnApply.setOnClickListener(v -> {
+                if (currentJob != null) {
+                    Intent intent = new Intent(JobDetailActivity.this, AddJobActivity.class);
+                    intent.putExtra("jobId", currentJob.getId());
+                    startActivity(intent);
+                }
+            });
         } else {
             binding.btnApply.setVisibility(View.VISIBLE);
             if (!job.isActive()) {
                 binding.btnApply.setEnabled(false);
                 binding.btnApply.setText("Đã đóng tuyển dụng");
+                binding.btnApply.setOnClickListener(null);
             } else {
                 binding.btnApply.setEnabled(true);
                 binding.btnApply.setText("Ứng tuyển ngay");
+                binding.btnApply.setOnClickListener(v -> {
+                    if (!TokenManager.isLoggedIn()) {
+                        Toast.makeText(this, "Vui lòng đăng nhập để ứng tuyển", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (currentJob != null) {
+                        Intent intent = new Intent(this, ApplyJobActivity.class);
+                        intent.putExtra(ApplyJobActivity.EXTRA_JOB_ID, currentJob.getId());
+                        intent.putExtra(ApplyJobActivity.EXTRA_JOB_TITLE, currentJob.getName());
+                        if (currentJob.getCompany() != null) {
+                            intent.putExtra(ApplyJobActivity.EXTRA_COMPANY_NAME, currentJob.getCompany().getName());
+                        }
+                        startActivity(intent);
+                    }
+                });
             }
         }
     }

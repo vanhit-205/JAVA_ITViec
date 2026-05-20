@@ -110,8 +110,21 @@ public class JobDetailActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
+
+            binding.btnDelete.setVisibility(View.VISIBLE);
+            binding.btnDelete.setOnClickListener(v -> {
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Xóa công việc")
+                    .setMessage("Bạn có chắc chắn muốn xóa công việc này không?")
+                    .setPositiveButton("Xóa", (dialog, which) -> {
+                        deleteJob(jobId);
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
+            });
         } else {
             binding.btnApply.setVisibility(View.VISIBLE);
+            binding.btnDelete.setVisibility(View.GONE);
             if (!job.isActive()) {
                 binding.btnApply.setEnabled(false);
                 binding.btnApply.setText("Đã đóng tuyển dụng");
@@ -137,5 +150,17 @@ public class JobDetailActivity extends AppCompatActivity {
                 });
             }
         }
+    }
+
+    private void deleteJob(int id) {
+        viewModel.deleteJob(id).observe(this, response -> {
+            viewModel.setLoading(false);
+            if (response != null && response.isSuccess()) {
+                Toast.makeText(this, "Xóa công việc thành công", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, "Xóa công việc thất bại", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

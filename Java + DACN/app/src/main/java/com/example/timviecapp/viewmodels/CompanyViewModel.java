@@ -48,6 +48,11 @@ public class CompanyViewModel extends ViewModel {
         return companyRepository.updateCompany(id, request);
     }
 
+    public LiveData<ApiResponse<Object>> deleteCompany(int id) {
+        isLoading.setValue(true);
+        return companyRepository.deleteCompany(id);
+    }
+
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }

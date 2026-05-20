@@ -59,12 +59,16 @@ public class CompanyDetailActivity extends AppCompatActivity {
     private void setupToolbar() {
         binding.toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
-        // Thêm nút Sửa công ty cho Admin/Recruiter/Employer
+        // Thêm nút Sửa và Xóa công ty cho Admin/Recruiter/Employer
         String role = com.example.timviecapp.utils.TokenManager.getUserRole();
         if (role != null && (role.toUpperCase().contains("ADMIN") || role.toUpperCase().contains("RECRUITER") || role.toUpperCase().contains("EMPLOYER"))) {
             binding.toolbar.getMenu().add(0, 101, 0, "Sửa")
                 .setIcon(android.R.drawable.ic_menu_edit)
                 .setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_ALWAYS);
+            
+            binding.toolbar.getMenu().add(0, 102, 1, "Xóa")
+                .setIcon(android.R.drawable.ic_menu_delete)
+                .setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_NEVER);
             
             binding.toolbar.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == 101) {
@@ -72,10 +76,34 @@ public class CompanyDetailActivity extends AppCompatActivity {
                     intent.putExtra("companyId", companyId);
                     startActivity(intent);
                     return true;
+                } else if (item.getItemId() == 102) {
+                    new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Xóa công ty")
+                        .setMessage("Bạn có chắc chắn muốn xóa công ty này không?")
+                        .setPositiveButton("Xóa", (dialog, which) -> {
+                            deleteCompany();
+                        })
+                        .setNegativeButton("Hủy", null)
+                        .show();
+                    return true;
                 }
                 return false;
             });
         }
+    }
+
+    private void deleteCompany() {
+        binding.progressBar.setVisibility(View.VISIBLE);
+        companyViewModel.deleteCompany(companyId).observe(this, response -> {
+            binding.progressBar.setVisibility(View.GONE);
+            companyViewModel.setLoading(false);
+            if (response != null && response.isSuccess()) {
+                Toast.makeText(this, "Xóa công ty thành công", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, "Xóa công ty thất bại", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setupJobsList() {

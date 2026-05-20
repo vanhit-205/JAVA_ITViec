@@ -134,4 +134,26 @@ public class CompanyRepository {
         });
         return data;
     }
+
+    public LiveData<ApiResponse<Object>> deleteCompany(int id) {
+        MutableLiveData<ApiResponse<Object>> data = new MutableLiveData<>();
+        apiService.deleteCompany(id).enqueue(new Callback<ApiResponse<Object>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Object>> call, Response<ApiResponse<Object>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    data.setValue(response.body());
+                } else {
+                    Log.e(TAG, "deleteCompany failed: " + response.code());
+                    data.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Object>> call, Throwable t) {
+                Log.e(TAG, "deleteCompany error: " + t.getMessage());
+                data.setValue(null);
+            }
+        });
+        return data;
+    }
 }

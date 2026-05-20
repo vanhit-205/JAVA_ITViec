@@ -72,6 +72,11 @@ public class JobViewModel extends ViewModel {
         return jobRepository.updateJob(id, request);
     }
 
+    public LiveData<ApiResponse<Object>> deleteJob(int id) {
+        isLoading.setValue(true);
+        return jobRepository.deleteJob(id);
+    }
+
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }

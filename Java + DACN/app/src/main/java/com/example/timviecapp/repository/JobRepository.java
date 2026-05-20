@@ -145,4 +145,24 @@ public class JobRepository {
         });
         return jobData;
     }
+
+    public LiveData<ApiResponse<Object>> deleteJob(int id) {
+        MutableLiveData<ApiResponse<Object>> jobData = new MutableLiveData<>();
+        jobApiService.deleteJob(id).enqueue(new Callback<ApiResponse<Object>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Object>> call, Response<ApiResponse<Object>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    jobData.setValue(response.body());
+                } else {
+                    jobData.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Object>> call, Throwable t) {
+                jobData.setValue(null);
+            }
+        });
+        return jobData;
+    }
 }

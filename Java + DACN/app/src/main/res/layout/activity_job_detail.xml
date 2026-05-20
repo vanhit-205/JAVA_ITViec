@@ -264,15 +264,34 @@
         app:cardElevation="8dp"
         app:cardBackgroundColor="@color/white">
 
-        <Button
-            android:id="@+id/btnApply"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_margin="16dp"
-            android:text="Ứng tuyển ngay"
-            android:textAllCaps="false"
-            android:backgroundTint="@color/colorPrimary"
-            android:textColor="@color/white" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <Button
+                android:id="@+id/btnApply"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:text="Ứng tuyển ngay"
+                android:textAllCaps="false"
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btnDelete"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="Xóa công việc"
+                android:textAllCaps="false"
+                android:backgroundTint="#D32F2F"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+        </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

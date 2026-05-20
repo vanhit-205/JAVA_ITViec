@@ -75,13 +75,34 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <HorizontalScrollView
+        android:id="@+id/skillFilterScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_marginTop="4dp"
+        android:paddingHorizontal="12dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/searchCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupSkillFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="true"
+            android:paddingVertical="6dp" />
+    </HorizontalScrollView>
+
     <TextView
         android:id="@+id/tvJobCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:textColor="@android:color/darker_gray"
-        app:layout_constraintTop_toBottomOf="@id/searchCard"
+        app:layout_constraintTop_toBottomOf="@id/skillFilterScrollView"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="15 công việc được tìm thấy" />
 

@@ -16,6 +16,25 @@
         app:title="Lịch sử ứng tuyển"
         app:titleTextColor="@android:color/white" />
 
+    <!-- Filter by Company -->
+    <HorizontalScrollView
+        android:id="@+id/companyFilterScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:background="#F5F5F5"
+        android:visibility="gone">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupCompanies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    </HorizontalScrollView>
+
     <!-- Loading -->
     <ProgressBar
         android:id="@+id/progressBar"

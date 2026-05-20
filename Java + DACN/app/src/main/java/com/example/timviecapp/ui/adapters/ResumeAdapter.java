@@ -54,9 +54,34 @@ public class ResumeAdapter extends RecyclerView.Adapter<ResumeAdapter.ResumeView
         }
 
         public void bind(ResumeResponse resume) {
-            binding.tvResumeTitle.setText(resume.getEmail()); // Using email as title if title is missing in model
+            // Dùng trường phẳng từ backend (không phải lồng nhau)
+            String jobTitle = resume.getJobName() != null && !resume.getJobName().isEmpty()
+                    ? resume.getJobName() : "Công việc ẩn danh";
+            binding.tvResumeTitle.setText(jobTitle);
+
+            String companyName = resume.getCompanyName() != null && !resume.getCompanyName().isEmpty()
+                    ? resume.getCompanyName() : "Công ty ẩn danh";
+            binding.tvCompanyName.setText(companyName);
+
+            String candidateName = resume.getUsername() != null && !resume.getUsername().isEmpty()
+                    ? resume.getUsername() : "Chưa cập nhật tên";
+            String candidateEmail = resume.getEmail() != null ? resume.getEmail() : "N/A";
+            binding.tvCandidateInfo.setText("Ứng viên: " + candidateName + " (" + candidateEmail + ")");
+
             binding.chipStatus.setText(resume.getStatus());
-            binding.tvResumeDate.setText("ID: " + resume.getId());
+            binding.tvResumeDate.setText("Mã hồ sơ: #" + resume.getId());
+
+            // Beautiful status-based coloring for Chip
+            if ("PENDING".equalsIgnoreCase(resume.getStatus())) {
+                binding.chipStatus.setChipBackgroundColorResource(android.R.color.holo_orange_light);
+                binding.chipStatus.setTextColor(binding.getRoot().getContext().getResources().getColor(android.R.color.black));
+            } else if ("APPROVED".equalsIgnoreCase(resume.getStatus()) || "ACCEPTED".equalsIgnoreCase(resume.getStatus())) {
+                binding.chipStatus.setChipBackgroundColorResource(android.R.color.holo_green_light);
+                binding.chipStatus.setTextColor(binding.getRoot().getContext().getResources().getColor(android.R.color.black));
+            } else {
+                binding.chipStatus.setChipBackgroundColorResource(android.R.color.darker_gray);
+                binding.chipStatus.setTextColor(binding.getRoot().getContext().getResources().getColor(android.R.color.white));
+            }
 
             binding.btnView.setOnClickListener(v -> {
                 if (listener != null) listener.onView(resume);

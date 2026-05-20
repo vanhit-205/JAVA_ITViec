@@ -82,18 +82,14 @@ public class ResumeDetailActivity extends AppCompatActivity {
         // Email ứng viên
         binding.tvEmail.setText("Email: " + (resume.getEmail() != null ? resume.getEmail() : "N/A"));
 
-        // Thông tin công việc
-        if (resume.getJob() != null) {
-            binding.tvJobName.setText(resume.getJob().getName());
-            if (resume.getJob().getCompany() != null) {
-                binding.tvJobCompany.setText("Công ty: " + resume.getJob().getCompany().getName());
-            } else {
-                binding.tvJobCompany.setText("Công ty: N/A");
-            }
-        } else {
-            binding.tvJobName.setText("N/A");
-            binding.tvJobCompany.setText("");
-        }
+        // Thông tin công việc - dùng trường phẳng từ backend
+        String jobName = resume.getJobName() != null && !resume.getJobName().isEmpty()
+                ? resume.getJobName() : "N/A";
+        binding.tvJobName.setText(jobName);
+
+        String companyName = resume.getCompanyName() != null && !resume.getCompanyName().isEmpty()
+                ? resume.getCompanyName() : "N/A";
+        binding.tvJobCompany.setText("Công ty: " + companyName);
 
         // Link CV
         binding.tvCvUrl.setText(resume.getUrl() != null ? resume.getUrl() : "Không có link CV");
@@ -219,12 +215,13 @@ public class ResumeDetailActivity extends AppCompatActivity {
                 return;
             }
 
-            int userId = (resume.getUser() != null) ? resume.getUser().getId() : TokenManager.getUserId();
+            int userId = (int) resume.getUserId();
+            if (userId == 0) userId = TokenManager.getUserId();
             ResumeRequest request = new ResumeRequest(
                     resume.getEmail(),
                     newUrl,
                     userId,
-                    resume.getJob() != null ? resume.getJob().getId() : 0
+                    (int) resume.getJobId()
             );
 
             binding.progressBar.setVisibility(View.VISIBLE);

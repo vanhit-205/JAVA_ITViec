@@ -14,15 +14,25 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.timviecapp.databinding.FragmentJobBinding;
+import com.example.timviecapp.models.job.JobResponse;
+import com.example.timviecapp.models.skill.SkillResponse;
 import com.example.timviecapp.ui.adapters.JobAdapter;
 import com.example.timviecapp.ui.jobs.JobDetailActivity;
 import com.example.timviecapp.viewmodels.JobViewModel;
+import com.example.timviecapp.viewmodels.SkillViewModel;
+import com.google.android.material.chip.Chip;
+
+import java.util.List;
 
 public class JobFragment extends Fragment {
     private FragmentJobBinding binding;
     private JobViewModel viewModel;
+    private SkillViewModel skillViewModel;
     private JobAdapter adapter;
     private String initialQuery = "";
+    // Skill filter state
+    private String selectedSkillName = null;
+    private List<JobResponse> allLoadedJobs = new java.util.ArrayList<>();
 
     @Nullable
     @Override
@@ -36,14 +46,16 @@ public class JobFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(JobViewModel.class);
+        skillViewModel = new ViewModelProvider(this).get(SkillViewModel.class);
 
         setupRecyclerView();
         setupListeners();
         observeViewModel();
+        loadSkillFilterChips();
 
         if (initialQuery != null && !initialQuery.isEmpty()) {
             binding.etSearchKeyword.setText(initialQuery);
-            initialQuery = ""; // reset after setting
+            initialQuery = "";
             searchJobs();
         } else {
             loadJobs();
@@ -55,6 +67,91 @@ public class JobFragment extends Fragment {
         if (binding != null) {
             binding.etSearchKeyword.setText(query);
             searchJobs();
+        }
+    }
+
+    /**
+     * Nhóm 2: Tải và hiển thị thanh chip lọc theo kỹ năng
+     */
+    private void loadSkillFilterChips() {
+        skillViewModel.getSkills(0, 50).observe(getViewLifecycleOwner(), response -> {
+            if (response != null && response.isSuccess() && response.getData() != null
+                    && response.getData().getItems() != null
+                    && !response.getData().getItems().isEmpty()) {
+
+                List<SkillResponse> skills = response.getData().getItems();
+                binding.skillFilterScrollView.setVisibility(View.VISIBLE);
+                binding.chipGroupSkillFilter.removeAllViews();
+
+                // Chip "Tất cả"
+                Chip allChip = createFilterChip("Tất cả");
+                allChip.setChecked(true);
+                allChip.setOnCheckedChangeListener((btn, isChecked) -> {
+                    if (isChecked) {
+                        selectedSkillName = null;
+                        applySkillFilter();
+                    }
+                });
+                binding.chipGroupSkillFilter.addView(allChip);
+
+                // Chip từng kỹ năng
+                for (SkillResponse skill : skills) {
+                    Chip chip = createFilterChip(skill.getName());
+                    chip.setOnCheckedChangeListener((btn, isChecked) -> {
+                        if (isChecked) {
+                            selectedSkillName = skill.getName();
+                            applySkillFilter();
+                        }
+                    });
+                    binding.chipGroupSkillFilter.addView(chip);
+                }
+            }
+        });
+    }
+
+    private Chip createFilterChip(String label) {
+        Chip chip = new Chip(requireContext());
+        chip.setText(label);
+        chip.setCheckable(true);
+        chip.setClickable(true);
+        chip.setChipBackgroundColorResource(android.R.color.transparent);
+        chip.setChipStrokeColorResource(com.example.timviecapp.R.color.colorPrimary);
+        chip.setChipStrokeWidth(2f);
+        chip.setCheckedIconVisible(false);
+        chip.setTextColor(requireContext().getResources().getColor(com.example.timviecapp.R.color.black));
+        chip.setOnCheckedChangeListener((btn, isChecked) -> {
+            if (isChecked) {
+                chip.setChipBackgroundColorResource(com.example.timviecapp.R.color.colorPrimary);
+                chip.setTextColor(requireContext().getResources().getColor(android.R.color.white));
+            } else {
+                chip.setChipBackgroundColorResource(android.R.color.transparent);
+                chip.setTextColor(requireContext().getResources().getColor(com.example.timviecapp.R.color.black));
+            }
+        });
+        return chip;
+    }
+
+    /**
+     * Lọc danh sách job đã tải sẵn theo kỹ năng được chọn (client-side)
+     */
+    private void applySkillFilter() {
+        if (selectedSkillName == null) {
+            adapter.setJobs(allLoadedJobs);
+            binding.tvJobCount.setText(allLoadedJobs.size() + " công việc được tìm thấy");
+        } else {
+            List<JobResponse> filtered = new java.util.ArrayList<>();
+            for (JobResponse job : allLoadedJobs) {
+                if (job.getSkills() != null) {
+                    for (SkillResponse s : job.getSkills()) {
+                        if (selectedSkillName.equals(s.getName())) {
+                            filtered.add(job);
+                            break;
+                        }
+                    }
+                }
+            }
+            adapter.setJobs(filtered);
+            binding.tvJobCount.setText(filtered.size() + " công việc yêu cầu \"" + selectedSkillName + "\"");
         }
     }
 
@@ -80,8 +177,9 @@ public class JobFragment extends Fragment {
             binding.progressBar.setVisibility(View.GONE);
             viewModel.setLoading(false);
             if (response != null && response.isSuccess() && response.getData() != null) {
-                adapter.setJobs(response.getData().getItems());
-                binding.tvJobCount.setText(response.getData().getItems().size() + " công việc được tìm thấy");
+                allLoadedJobs = response.getData().getItems() != null
+                        ? response.getData().getItems() : new java.util.ArrayList<>();
+                applySkillFilter(); // Áp dụng filter hiện tại (nếu có)
             } else {
                 Toast.makeText(getContext(), "Không thể tải danh sách công việc", Toast.LENGTH_SHORT).show();
             }
@@ -106,12 +204,11 @@ public class JobFragment extends Fragment {
             binding.progressBar.setVisibility(View.GONE);
             viewModel.setLoading(false);
             if (response != null && response.isSuccess() && response.getData() != null) {
-                adapter.setJobs(response.getData().getItems());
-                int count = response.getData().getItems().size();
-                String searchText = keyword.isEmpty() ? location : keyword;
-                binding.tvJobCount.setText(count + " công việc phù hợp với \"" + searchText + "\"");
+                allLoadedJobs = response.getData().getItems() != null
+                        ? response.getData().getItems() : new java.util.ArrayList<>();
+                applySkillFilter();
 
-                if (count == 0) {
+                if (allLoadedJobs.isEmpty()) {
                     Toast.makeText(getContext(), "Không tìm thấy công việc phù hợp", Toast.LENGTH_SHORT).show();
                 }
             } else {

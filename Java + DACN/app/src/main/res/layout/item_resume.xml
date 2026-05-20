@@ -44,6 +44,25 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/tvCompanyName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="Công ty TNHH FPT Software" />
+
+        <TextView
+            android:id="@+id/tvCandidateInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="13sp"
+            tools:text="Ứng viên: Nguyen Van A (nva@gmail.com)" />
+
+        <TextView
             android:id="@+id/tvResumeDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

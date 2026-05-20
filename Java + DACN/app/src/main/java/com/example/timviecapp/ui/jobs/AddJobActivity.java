@@ -10,18 +10,28 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.timviecapp.databinding.ActivityAddJobBinding;
 import com.example.timviecapp.models.job.JobRequest;
 import com.example.timviecapp.models.job.JobResponse;
+import com.example.timviecapp.models.skill.SkillResponse;
+import com.example.timviecapp.ui.admin.SkillPickerDialog;
 import com.example.timviecapp.viewmodels.JobViewModel;
+import com.example.timviecapp.viewmodels.SkillViewModel;
+import com.google.android.material.chip.Chip;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class AddJobActivity extends AppCompatActivity {
     private ActivityAddJobBinding binding;
     private JobViewModel viewModel;
+    private SkillViewModel skillViewModel;
     private int jobId = -1;
     private boolean isEditMode = false;
+
+    private List<SkillResponse> allSkills = new ArrayList<>();
+    private List<Integer> selectedSkillIds = new ArrayList<>();
+    private List<SkillResponse> selectedSkills = new ArrayList<>();
 
     private final java.util.Calendar startCalendar = java.util.Calendar.getInstance();
     private final java.util.Calendar endCalendar = java.util.Calendar.getInstance();
@@ -35,14 +45,15 @@ public class AddJobActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         viewModel = new ViewModelProvider(this).get(JobViewModel.class);
+        skillViewModel = new ViewModelProvider(this).get(SkillViewModel.class);
 
-        // Check if we are in Edit Mode
         jobId = getIntent().getIntExtra("jobId", -1);
         isEditMode = jobId != -1;
 
         setupToolbar();
         setupListeners();
         observeViewModel();
+        loadAllSkills();
 
         if (isEditMode) {
             binding.toolbar.setTitle("Sửa công việc");
@@ -60,10 +71,21 @@ public class AddJobActivity extends AppCompatActivity {
     }
 
     private void setupDefaultDates() {
-        // Mặc định hạn nộp là sau 30 ngày
         endCalendar.add(java.util.Calendar.DAY_OF_MONTH, 30);
         binding.etStartDate.setText(displayDateFormat.format(startCalendar.getTime()));
         binding.etEndDate.setText(displayDateFormat.format(endCalendar.getTime()));
+    }
+
+    /**
+     * Tải toàn bộ danh sách kỹ năng từ API để hiển thị trong SkillPickerDialog
+     */
+    private void loadAllSkills() {
+        skillViewModel.getSkills(0, 200).observe(this, response -> {
+            if (response != null && response.isSuccess() && response.getData() != null
+                    && response.getData().getItems() != null) {
+                allSkills = response.getData().getItems();
+            }
+        });
     }
 
     private void loadJobDetails() {
@@ -83,7 +105,16 @@ public class AddJobActivity extends AppCompatActivity {
                 }
                 binding.etDescription.setText(job.getDescription());
 
-                // Parse dates and set calendars
+                // Pre-populate selected skills
+                if (job.getSkills() != null) {
+                    selectedSkills = new ArrayList<>(job.getSkills());
+                    selectedSkillIds = new ArrayList<>();
+                    for (SkillResponse s : selectedSkills) {
+                        selectedSkillIds.add(s.getId());
+                    }
+                    renderSelectedSkillChips();
+                }
+
                 try {
                     SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
                     parser.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
@@ -106,6 +137,28 @@ public class AddJobActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Render lại ChipGroup kỹ năng đã chọn với nút X để bỏ chọn
+     */
+    private void renderSelectedSkillChips() {
+        binding.cgSelectedSkills.removeAllViews();
+        for (SkillResponse skill : selectedSkills) {
+            Chip chip = new Chip(this);
+            chip.setText(skill.getName());
+            chip.setCloseIconVisible(true);
+            chip.setChipBackgroundColorResource(com.example.timviecapp.R.color.colorPrimary);
+            chip.setTextColor(getResources().getColor(android.R.color.white));
+            chip.setCloseIconTint(android.content.res.ColorStateList.valueOf(
+                    getResources().getColor(android.R.color.white)));
+            chip.setOnCloseIconClickListener(v -> {
+                selectedSkillIds.remove((Integer) skill.getId());
+                selectedSkills.remove(skill);
+                renderSelectedSkillChips();
+            });
+            binding.cgSelectedSkills.addView(chip);
+        }
+    }
+
     private void showDatePicker(java.util.Calendar calendar, android.widget.EditText editText) {
         new android.app.DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
             calendar.set(java.util.Calendar.YEAR, year);
@@ -118,6 +171,21 @@ public class AddJobActivity extends AppCompatActivity {
     private void setupListeners() {
         binding.etStartDate.setOnClickListener(v -> showDatePicker(startCalendar, binding.etStartDate));
         binding.etEndDate.setOnClickListener(v -> showDatePicker(endCalendar, binding.etEndDate));
+
+        // Skill picker button
+        binding.btnPickSkills.setOnClickListener(v -> {
+            SkillPickerDialog dialog = new SkillPickerDialog(
+                    this,
+                    allSkills,
+                    selectedSkillIds,
+                    (ids, skills) -> {
+                        selectedSkillIds = ids;
+                        selectedSkills = skills;
+                        renderSelectedSkillChips();
+                    }
+            );
+            dialog.show();
+        });
 
         binding.btnSave.setOnClickListener(v -> {
             String name = binding.etName.getText().toString().trim();
@@ -143,7 +211,7 @@ public class AddJobActivity extends AppCompatActivity {
 
             JobRequest request = new JobRequest(
                     name, location, salary, quantity, level, description,
-                    startDate, endDate, true, companyId, new ArrayList<>()
+                    startDate, endDate, true, companyId, selectedSkillIds
             );
 
             binding.progressBar.setVisibility(View.VISIBLE);

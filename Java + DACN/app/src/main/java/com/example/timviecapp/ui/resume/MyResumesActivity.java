@@ -25,6 +25,7 @@ public class MyResumesActivity extends AppCompatActivity {
     private ActivityMyResumesBinding binding;
     private ResumeViewModel viewModel;
     private ResumeAdapter adapter;
+    private java.util.List<ResumeResponse> originalResumes = new java.util.ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,19 +106,102 @@ public class MyResumesActivity extends AppCompatActivity {
 
             if (response != null && response.isSuccess() && response.getData() != null
                     && response.getData().getItems() != null) {
-                if (response.getData().getItems().isEmpty()) {
-                    // Hiển thị thông báo danh sách trống + nút gợi ý
+                originalResumes = response.getData().getItems();
+                if (originalResumes == null) {
+                    originalResumes = new java.util.ArrayList<>();
+                }
+
+                if (originalResumes.isEmpty()) {
+                    binding.companyFilterScrollView.setVisibility(View.GONE);
                     binding.layoutEmpty.setVisibility(View.VISIBLE);
                     binding.rvResumes.setVisibility(View.GONE);
                 } else {
                     binding.layoutEmpty.setVisibility(View.GONE);
                     binding.rvResumes.setVisibility(View.VISIBLE);
-                    adapter.setResumes(response.getData().getItems());
+                    adapter.setResumes(originalResumes);
+                    setupCompanyFilterChips();
                 }
             } else {
                 Toast.makeText(this, "Không thể tải lịch sử ứng tuyển", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void setupCompanyFilterChips() {
+        java.util.List<String> companies = new java.util.ArrayList<>();
+        companies.add("Tất cả công ty");
+
+        for (ResumeResponse r : originalResumes) {
+            // Dùng trường phẳng từ backend
+            String cName = r.getCompanyName();
+            if (cName != null && !cName.trim().isEmpty() && !companies.contains(cName)) {
+                companies.add(cName);
+            }
+        }
+
+        if (companies.size() <= 1) {
+            binding.companyFilterScrollView.setVisibility(View.GONE);
+            return;
+        }
+
+        binding.companyFilterScrollView.setVisibility(View.VISIBLE);
+        binding.chipGroupCompanies.removeAllViews();
+
+        for (int i = 0; i < companies.size(); i++) {
+            String companyName = companies.get(i);
+            com.google.android.material.chip.Chip chip = new com.google.android.material.chip.Chip(this);
+            chip.setText(companyName);
+            chip.setCheckable(true);
+            chip.setClickable(true);
+
+            // Sleek choice chip styling
+            chip.setChipBackgroundColorResource(android.R.color.transparent);
+            chip.setChipStrokeColorResource(com.example.timviecapp.R.color.colorPrimary);
+            chip.setChipStrokeWidth(2f);
+            chip.setTextColor(getResources().getColor(com.example.timviecapp.R.color.black));
+
+            if (i == 0) {
+                chip.setChecked(true);
+            }
+
+            final String finalCompany = companyName;
+            chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    filterResumesByCompany(finalCompany);
+                }
+            });
+
+            binding.chipGroupCompanies.addView(chip);
+        }
+    }
+
+    private void filterResumesByCompany(String companyName) {
+        if ("Tất cả công ty".equals(companyName)) {
+            adapter.setResumes(originalResumes);
+            if (originalResumes.isEmpty()) {
+                binding.layoutEmpty.setVisibility(View.VISIBLE);
+                binding.rvResumes.setVisibility(View.GONE);
+            } else {
+                binding.layoutEmpty.setVisibility(View.GONE);
+                binding.rvResumes.setVisibility(View.VISIBLE);
+            }
+        } else {
+            java.util.List<ResumeResponse> filteredList = new java.util.ArrayList<>();
+            for (ResumeResponse r : originalResumes) {
+                // Dùng trường phẳng từ backend
+                if (companyName.equals(r.getCompanyName())) {
+                    filteredList.add(r);
+                }
+            }
+            adapter.setResumes(filteredList);
+            if (filteredList.isEmpty()) {
+                binding.layoutEmpty.setVisibility(View.VISIBLE);
+                binding.rvResumes.setVisibility(View.GONE);
+            } else {
+                binding.layoutEmpty.setVisibility(View.GONE);
+                binding.rvResumes.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     /**

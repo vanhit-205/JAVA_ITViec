@@ -75,13 +75,30 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
             binding.tvDescription.setText(job.getDescription());
             binding.tvDate.setText("Ngày bắt đầu: " + com.example.timviecapp.utils.DateUtils.formatIsoDate(job.getStartDate()));
 
+            // Render skill chips (tối đa 3, phần còn lại hiện "+N nữa")
             binding.cgSkills.removeAllViews();
-            if (job.getSkills() != null) {
-                for (SkillResponse skill : job.getSkills()) {
+            if (job.getSkills() != null && !job.getSkills().isEmpty()) {
+                int max = Math.min(3, job.getSkills().size());
+                for (int i = 0; i < max; i++) {
+                    SkillResponse skill = job.getSkills().get(i);
                     Chip chip = new Chip(itemView.getContext());
                     chip.setText(skill.getName());
                     chip.setChipMinHeight(0f);
+                    chip.setClickable(false);
+                    chip.setCheckable(false);
+                    chip.setChipBackgroundColorResource(com.example.timviecapp.R.color.colorPrimary);
+                    chip.setTextColor(itemView.getContext().getResources().getColor(android.R.color.white));
+                    chip.setTextSize(11f);
                     binding.cgSkills.addView(chip);
+                }
+                if (job.getSkills().size() > 3) {
+                    Chip more = new Chip(itemView.getContext());
+                    more.setText("+" + (job.getSkills().size() - 3) + " nữa");
+                    more.setChipMinHeight(0f);
+                    more.setClickable(false);
+                    more.setCheckable(false);
+                    more.setTextSize(11f);
+                    binding.cgSkills.addView(more);
                 }
             }
         }

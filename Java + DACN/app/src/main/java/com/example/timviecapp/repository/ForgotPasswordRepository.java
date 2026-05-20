@@ -57,7 +57,7 @@ public class ForgotPasswordRepository {
 
     public LiveData<ApiResponse<Object>> changePassword(String email, String otp, String newPassword) {
         MutableLiveData<ApiResponse<Object>> data = new MutableLiveData<>();
-        apiService.changePassword(new ChangePasswordRequest(email, otp, newPassword)).enqueue(new Callback<ApiResponse<Object>>() {
+        apiService.changePassword(new ChangePasswordRequest(email, otp, newPassword, newPassword)).enqueue(new Callback<ApiResponse<Object>>() {
             @Override
             public void onResponse(Call<ApiResponse<Object>> call, Response<ApiResponse<Object>> response) {
                 if (response.isSuccessful()) data.setValue(response.body());

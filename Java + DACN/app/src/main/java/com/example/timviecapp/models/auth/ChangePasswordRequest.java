@@ -1,14 +1,25 @@
 package com.example.timviecapp.models.auth;
 
-public class ChangePasswordRequest {
-    private String email;
-    private String password;
-    private String confirmPassword;
+import com.google.gson.annotations.SerializedName;
 
-    public ChangePasswordRequest(String email, String password, String confirmPassword) {
+public class ChangePasswordRequest {
+    @SerializedName("email")
+    private String email;
+
+    @SerializedName("otp")
+    private String otp;
+
+    @SerializedName("newPassword")
+    private String newPassword;
+
+    @SerializedName("repeatPassword")
+    private String repeatPassword;
+
+    public ChangePasswordRequest(String email, String otp, String newPassword, String repeatPassword) {
         this.email = email;
-        this.password = password;
-        this.confirmPassword = confirmPassword;
+        this.otp = otp;
+        this.newPassword = newPassword;
+        this.repeatPassword = repeatPassword;
     }
 
     public String getEmail() {
@@ -19,19 +30,27 @@ public class ChangePasswordRequest {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getOtp() {
+        return otp;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setOtp(String otp) {
+        this.otp = otp;
     }
 
-    public String getConfirmPassword() {
-        return confirmPassword;
+    public String getNewPassword() {
+        return newPassword;
     }
 
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getRepeatPassword() {
+        return repeatPassword;
+    }
+
+    public void setRepeatPassword(String repeatPassword) {
+        this.repeatPassword = repeatPassword;
     }
 }

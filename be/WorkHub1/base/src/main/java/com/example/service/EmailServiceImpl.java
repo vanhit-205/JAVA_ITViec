@@ -43,9 +43,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendEmail(String to, String subject, String content, boolean isHtml) {
-        log.info("Sending email to: " + to);
+        log.info("Sending email to: " + to + " (HTML: " + isHtml + ")");
 
-        Mail mail = Mail.withText(to, subject, content);
+        Mail mail = isHtml ? Mail.withHtml(to, subject, content) : Mail.withText(to, subject, content);
         mail.setFrom(FROM_EMAIL);
 
         try {

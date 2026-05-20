@@ -114,7 +114,6 @@ public class ProfileActivity extends AppCompatActivity {
             request.setAge(age);
             request.setGender(gender);
             request.setAddress(address);
-            request.setRole(TokenManager.getUserRole());
 
             viewModel.updateUser(currentUserId, request).observe(this, response -> {
                 viewModel.setLoading(false);

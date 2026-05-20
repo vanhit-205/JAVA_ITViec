@@ -131,7 +131,7 @@ public class UserService {
         }
 
         // Update role if provided and valid (Only Admin can change role)
-        if (request.role != null && !request.role.isEmpty()) {
+        if (request.role != null && !request.role.isEmpty() && !request.role.equals(user.role.name)) {
             User currentUser = userRepository.findById(currentUserId);
             if (currentUser == null || !"ROLE_ADMIN".equals(currentUser.role.name)) {
                 throw new AppException(403, "Only administrators can change user roles");

@@ -17,6 +17,9 @@ public class Skill extends PanacheEntity {
     @Column(nullable = false)
     public String name;
 
+    @Column(columnDefinition = "TEXT")
+    public String description;
+
     @Column
     public String level;
 

@@ -17,6 +17,7 @@ public class SkillMapper {
         return new SkillResponse(
                 skill.id,
                 skill.name,
+                skill.description,
                 skill.level,
                 skill.deleted,
                 skill.createdAt,
@@ -35,6 +36,7 @@ public class SkillMapper {
         if (request == null) return null;
         Skill skill = new Skill();
         skill.name = request.name;
+        skill.description = request.description;
         skill.level = request.level;
         return skill;
     }
@@ -42,6 +44,7 @@ public class SkillMapper {
     public void updateEntity(Skill skill, SkillUpdateRequest request) {
         if (request == null || skill == null) return;
         if (request.name != null) skill.name = request.name;
+        if (request.description != null) skill.description = request.description;
         if (request.level != null) skill.level = request.level;
     }
 }

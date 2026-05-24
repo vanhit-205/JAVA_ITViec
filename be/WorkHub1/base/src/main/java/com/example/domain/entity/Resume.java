@@ -6,6 +6,8 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tbl_resumes", indexes = {
@@ -31,6 +33,14 @@ public class Resume extends PanacheEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id")
     public Job job;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "tbl_resume_skill",
+            joinColumns = @JoinColumn(name = "resume_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id")
+    )
+    public List<Skill> skills = new ArrayList<>();
 
     // Soft delete
     public boolean deleted = false;

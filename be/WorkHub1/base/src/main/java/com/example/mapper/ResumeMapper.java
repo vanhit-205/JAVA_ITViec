@@ -5,12 +5,16 @@ import com.example.domain.dto.request.ResumeUpdateRequest;
 import com.example.domain.dto.response.ResumeResponse;
 import com.example.domain.entity.Resume;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ResumeMapper {
+
+    @Inject
+    SkillMapper skillMapper;
 
     public ResumeResponse toDto(Resume resume) {
         if (resume == null) return null;
@@ -27,6 +31,7 @@ public class ResumeMapper {
                 .jobName(resume.job != null ? resume.job.name : null)
                 .companyId(resume.job != null && resume.job.company != null ? resume.job.company.id : null)
                 .companyName(resume.job != null && resume.job.company != null ? resume.job.company.name : null)
+                .skills(resume.skills != null ? skillMapper.toDtoList(resume.skills) : null)
                 .createdAt(resume.createdAt)
                 .updatedAt(resume.updatedAt)
                 .createdBy(resume.createdBy)

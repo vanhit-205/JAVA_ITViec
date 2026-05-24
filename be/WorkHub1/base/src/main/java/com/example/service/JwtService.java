@@ -38,7 +38,7 @@ public class JwtService {
         Instant now = Instant.now();
         Instant expiry = now.plus(ACCESS_TOKEN_EXPIRY);
 
-        String token = Jwt.issuer(issuer)
+        var jwtBuilder = Jwt.issuer(issuer)
                 .subject(user.id.toString())
                 .upn(user.email)
                 .claim("userId", user.id)
@@ -47,9 +47,14 @@ public class JwtService {
                 .claim("role", user.role.name)
                 .groups(groups)
                 .issuedAt(now)
-                .expiresAt(expiry)
-                .sign();
+                .expiresAt(expiry);
 
+        // Nhúng companyId vào JWT nếu user đang thuộc một công ty (dùng cho authorization RECRUITER)
+        if (user.company != null && user.company.id != null) {
+            jwtBuilder = jwtBuilder.claim("companyId", user.company.id);
+        }
+
+        String token = jwtBuilder.sign();
         log.info("Generated access token for user: " + user.email);
         return token;
     }

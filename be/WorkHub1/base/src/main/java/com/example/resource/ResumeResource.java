@@ -5,10 +5,14 @@ import com.example.domain.dto.request.ResumeCreateRequest;
 import com.example.domain.dto.request.ResumeStatusUpdateRequest;
 import com.example.domain.dto.request.ResumeUpdateRequest;
 import com.example.domain.dto.response.ResumeResponse;
+import com.example.domain.dto.response.JobMatchingResponse;
+import com.example.domain.dto.response.ResumeMatchingResponse;
 import com.example.pagination.PageRequest;
 import com.example.pagination.PageResponse;
 import com.example.security.SecurityContext;
 import com.example.service.ResumeService;
+import org.jboss.resteasy.reactive.RestForm;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -16,6 +20,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
+
+import java.util.List;
 
 @Path("/api/v1/resumes")
 @Produces(MediaType.APPLICATION_JSON)
@@ -38,6 +44,34 @@ public class ResumeResource {
         ResumeResponse resume = resumeService.create(request, currentUserId);
         return Response.status(Response.Status.CREATED)
                 .entity(BaseResponse.success(resume, 201, "/api/v1/resumes"))
+                .build();
+    }
+
+    @POST
+    @Path("/upload")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @RolesAllowed({"ROLE_CANDIDATE", "ROLE_ADMIN"})
+    public Response upload(
+            @RestForm("file") FileUpload file,
+            @RestForm("email") String email,
+            @RestForm("jobId") Long jobId) {
+        log.info("Upload resume file request");
+        Long currentUserId = securityContext.getCurrentUserId();
+        ResumeResponse resume = resumeService.createWithUpload(file, email, jobId, currentUserId);
+        return Response.status(Response.Status.CREATED)
+                .entity(BaseResponse.success(resume, 201, "/api/v1/resumes/upload"))
+                .build();
+    }
+
+    @POST
+    @Path("/import-drive")
+    @RolesAllowed({"ROLE_CANDIDATE", "ROLE_ADMIN"})
+    public Response importDrive(@Valid ResumeCreateRequest request) {
+        log.info("Import Google Drive link request");
+        Long currentUserId = securityContext.getCurrentUserId();
+        ResumeResponse resume = resumeService.createWithDriveLink(request.url, request.email, request.jobId, currentUserId);
+        return Response.status(Response.Status.CREATED)
+                .entity(BaseResponse.success(resume, 201, "/api/v1/resumes/import-drive"))
                 .build();
     }
 
@@ -181,6 +215,30 @@ public class ResumeResource {
 
         PageResponse<ResumeResponse> response = resumeService.getByCompany(companyId, pageRequest);
         return Response.ok(BaseResponse.success(response, 200, "/api/v1/resumes/company/" + companyId))
+                .build();
+    }
+
+    @GET
+    @Path("/{id}/matching-jobs")
+    @RolesAllowed({"ROLE_CANDIDATE", "ROLE_ADMIN"})
+    public Response getMatchingJobs(@PathParam("id") Long id) {
+        log.info("Get matching jobs for resume: " + id);
+        Long currentUserId = securityContext.getCurrentUserId();
+        String currentRole = securityContext.getCurrentUserRole();
+        List<JobMatchingResponse> jobs = resumeService.getMatchingJobsForResume(id, currentUserId, currentRole);
+        return Response.ok(BaseResponse.success(jobs, 200, "/api/v1/resumes/" + id + "/matching-jobs"))
+                .build();
+    }
+
+    @GET
+    @Path("/job/{jobId}/matching-candidates")
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_RECRUITER"})
+    public Response getMatchingCandidates(@PathParam("jobId") Long jobId) {
+        log.info("Get matching candidates for job: " + jobId);
+        Long currentUserId = securityContext.getCurrentUserId();
+        String currentRole = securityContext.getCurrentUserRole();
+        List<ResumeMatchingResponse> resumes = resumeService.getMatchingCandidatesForJob(jobId, currentUserId, currentRole);
+        return Response.ok(BaseResponse.success(resumes, 200, "/api/v1/resumes/job/" + jobId + "/matching-candidates"))
                 .build();
     }
 }

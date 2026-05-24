@@ -5,6 +5,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,6 +46,10 @@ public class Skill extends PanacheEntity {
     @ManyToMany(mappedBy = "skills", fetch = FetchType.LAZY)
     @JsonIgnore
     public List<Subscriber> subscribers;
+
+    @ManyToMany(mappedBy = "skills", fetch = FetchType.LAZY)
+    @JsonIgnore
+    public List<Resume> resumes = new ArrayList<>();
 
     public Skill() {
         this.deleted = false;

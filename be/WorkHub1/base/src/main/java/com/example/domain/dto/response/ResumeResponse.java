@@ -3,6 +3,8 @@ package com.example.domain.dto.response;
 import com.example.constant.StatusEnum;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResumeResponse {
 
@@ -21,6 +23,7 @@ public class ResumeResponse {
     public Instant updatedAt;
     public Long createdBy;
     public Long updatedBy;
+    public List<SkillResponse> skills = new ArrayList<>();
 
     public ResumeResponse() {
     }
@@ -153,6 +156,14 @@ public class ResumeResponse {
         this.updatedBy = updatedBy;
     }
 
+    public List<SkillResponse> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<SkillResponse> skills) {
+        this.skills = skills;
+    }
+
     // Builder pattern
     public static Builder builder() {
         return new Builder();
@@ -233,6 +244,11 @@ public class ResumeResponse {
 
         public Builder updatedBy(Long updatedBy) {
             response.updatedBy = updatedBy;
+            return this;
+        }
+
+        public Builder skills(List<SkillResponse> skills) {
+            response.skills = skills;
             return this;
         }
 

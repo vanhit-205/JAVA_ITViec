@@ -116,11 +116,7 @@ public class JobService {
                 .orElseThrow(() -> new AppException(ErrorCode.JOB_NOT_FOUND.code, ErrorCode.JOB_NOT_FOUND.message));
 
         // Authorization for RECRUITER
-        if ("ROLE_RECRUITER".equals(currentRole)) {
-            if (job.company == null || !job.company.id.equals(currentCompanyId)) {
-                throw new AppException(ErrorCode.JOB_ACCESS_DENIED.code, ErrorCode.JOB_ACCESS_DENIED.message);
-            }
-        }
+        validateJobOwnership(job, currentUserId, currentRole, currentCompanyId);
 
         // Cannot edit closed or expired job (RECRUITER only)
         if ("ROLE_RECRUITER".equals(currentRole) && isJobClosed(job)) {
@@ -160,11 +156,7 @@ public class JobService {
                 .orElseThrow(() -> new AppException(ErrorCode.JOB_NOT_FOUND.code, ErrorCode.JOB_NOT_FOUND.message));
 
         // Authorization
-        if ("ROLE_RECRUITER".equals(currentRole)) {
-            if (job.company == null || !job.company.id.equals(currentCompanyId)) {
-                throw new AppException(ErrorCode.JOB_ACCESS_DENIED.code, ErrorCode.JOB_ACCESS_DENIED.message);
-            }
-        }
+        validateJobOwnership(job, currentUserId, currentRole, currentCompanyId);
 
         // Soft delete
         job.softDelete();
@@ -182,11 +174,7 @@ public class JobService {
                 .orElseThrow(() -> new AppException(ErrorCode.JOB_NOT_FOUND.code, ErrorCode.JOB_NOT_FOUND.message));
 
         // Authorization
-        if ("ROLE_RECRUITER".equals(currentRole)) {
-            if (job.company == null || !job.company.id.equals(currentCompanyId)) {
-                throw new AppException(ErrorCode.JOB_ACCESS_DENIED.code, ErrorCode.JOB_ACCESS_DENIED.message);
-            }
-        }
+        validateJobOwnership(job, currentUserId, currentRole, currentCompanyId);
 
         job.close();
         job.updatedBy = currentUserId;
@@ -211,11 +199,7 @@ public class JobService {
         }
 
         // Authorization
-        if ("ROLE_RECRUITER".equals(currentRole)) {
-            if (job.company == null || !job.company.id.equals(currentCompanyId)) {
-                throw new AppException(ErrorCode.JOB_ACCESS_DENIED.code, ErrorCode.JOB_ACCESS_DENIED.message);
-            }
-        }
+        validateJobOwnership(job, currentUserId, currentRole, currentCompanyId);
 
         job.reopen();
         job.updatedBy = currentUserId;
@@ -363,5 +347,32 @@ public class JobService {
 
     private boolean isJobClosed(Job job) {
         return job.endDate != null && job.endDate.isBefore(Instant.now());
+    }
+
+    /**
+     * Xác thực quyền sở hữu Công việc tuyển dụng cho Nhà tuyển dụng một cách tuyệt đối an toàn.
+     * Hỗ trợ 3 tầng kiểm tra: JWT Claim, Tác giả tạo tin (createdBy), và Truy vấn trực tiếp thực tế từ DB.
+     */
+    private void validateJobOwnership(Job job, Long currentUserId, String currentRole, Long currentCompanyId) {
+        if ("ROLE_RECRUITER".equals(currentRole)) {
+            // 1. Kiểm tra dựa trên companyId từ JWT token
+            if (job.company != null && currentCompanyId != null && job.company.id.equals(currentCompanyId)) {
+                return; // Hợp lệ
+            }
+            
+            // 2. Kiểm tra dựa trên tác giả tạo tin (createdBy)
+            if (job.createdBy != null && job.createdBy.equals(currentUserId)) {
+                return; // Hợp lệ
+            }
+            
+            // 3. Truy vấn trực tiếp DB để lấy thông tin mới nhất (Phòng trường hợp Token bị stale)
+            User currentUser = userRepository.findById(currentUserId);
+            if (currentUser != null && currentUser.company != null && job.company != null && job.company.id.equals(currentUser.company.id)) {
+                return; // Hợp lệ
+            }
+            
+            // Nếu không vượt qua cả 3 chốt chặn bảo mật
+            throw new AppException(ErrorCode.JOB_ACCESS_DENIED.code, ErrorCode.JOB_ACCESS_DENIED.message);
+        }
     }
 }

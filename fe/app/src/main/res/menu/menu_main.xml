@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_profile"
+        android:title="Hồ sơ cá nhân"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_companies"
+        android:title="Công ty"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_my_resumes"
+        android:title="Lịch sử ứng tuyển"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_subscriber"
+        android:title="Đăng ký nhận việc"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_logout"
+        android:title="Đăng xuất"
+        app:showAsAction="never" />
+</menu>

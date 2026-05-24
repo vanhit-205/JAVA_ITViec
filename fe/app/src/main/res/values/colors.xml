@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
+    <!-- Basic Colors -->
+    <color name="black">#FF0F172A</color> <!-- Slate 900 for modern deep black -->
     <color name="white">#FFFFFFFF</color>
-    <color name="colorPrimary">#353CB8</color>
-    <color name="colorPrimaryVariant">#2A3093</color>
+    
+    <!-- Primary Brand Palette (Professional Blue) -->
+    <color name="colorPrimary">#1E40AF</color> <!-- Premium Deep Blue -->
+    <color name="colorPrimaryVariant">#1D4ED8</color> <!-- Dynamic Blue -->
     <color name="colorOnPrimary">#FFFFFF</color>
-    <color name="colorSecondary">#353CB8</color>
-    <color name="colorSecondaryVariant">#2A3093</color>
+    
+    <!-- Secondary Brand Palette (Teal Accent) -->
+    <color name="colorSecondary">#0D9488</color> <!-- Elegant Teal -->
+    <color name="colorSecondaryVariant">#0F766E</color> <!-- Dark Teal -->
     <color name="colorOnSecondary">#FFFFFF</color>
-    <color name="backgroundColor">#FFFFFF</color>
+    
+    <!-- Theme Background and Surface Colors (Material 3 standard) -->
+    <color name="backgroundColor">#F8FAFC</color> <!-- Slate 50 ultra clean background -->
     <color name="surfaceColor">#FFFFFF</color>
-    <color name="errorColor">#B00020</color>
+    <color name="colorSurfaceVariant">#F1F5F9</color> <!-- Slate 100 -->
+    <color name="colorOutline">#CBD5E1</color> <!-- Slate 300 for borders -->
+    
+    <!-- Accent & State Colors -->
+    <color name="errorColor">#DC2626</color> <!-- Modern Red -->
+    <color name="softRed">#FEE2E2</color> <!-- Delicate Light Red for secondary alert elements -->
+    <color name="darkRedText">#B91C1C</color> <!-- Contrasting text for softRed background -->
+    <color name="successGreen">#059669</color> <!-- Premium Emerald Green for active states/salary -->
+    <color name="successGreenBg">#D1FAE5</color> <!-- Soft green background -->
+    
+    <!-- Typography Colors -->
+    <color name="textPrimary">#0F172A</color> <!-- Slate 900 -->
+    <color name="textSecondary">#475569</color> <!-- Slate 600 -->
+    <color name="textPlaceholder">#94A3B8</color> <!-- Slate 400 -->
 </resources>

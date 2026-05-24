@@ -69,6 +69,10 @@ public class ProfileFragment extends Fragment {
                 binding.etAge.setText(response.getData().getAge() != null ? response.getData().getAge() : "");
                 binding.etGender.setText(response.getData().getGender() != null ? response.getData().getGender() : "");
                 binding.etAddress.setText(response.getData().getAddress() != null ? response.getData().getAddress() : "");
+                
+                // Hiển thị thông tin thực tế lên Card tóm tắt ở đầu
+                binding.txtProfileName.setText(response.getData().getName());
+                binding.txtProfileEmail.setText(response.getData().getEmail());
             } else {
                 Toast.makeText(getContext(), "Không thể tải thông tin cá nhân", Toast.LENGTH_SHORT).show();
             }
@@ -157,6 +161,10 @@ public class ProfileFragment extends Fragment {
                 viewModel.setLoading(false);
                 if (response != null && response.isSuccess()) {
                     Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+                    
+                    // Cập nhật lại thông tin hiển thị trên Card tóm tắt ở đầu
+                    binding.txtProfileName.setText(name);
+                    
                     // Sync backward-compatible TokenManager
                     TokenManager.saveUserInfo(
                             currentUserId,

@@ -1,19 +1,69 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.TimViecApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
+    <!-- Base application theme using Material 3 Light -->
+    <style name="Base.Theme.TimViecApp" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Primary brand color (Professional Blue) -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
         <item name="colorOnPrimary">@color/colorOnPrimary</item>
-        <!-- Secondary brand color. -->
+        <item name="colorPrimaryContainer">#DBEAFE</item> <!-- Soft Blue container -->
+        <item name="colorOnPrimaryContainer">@color/colorPrimary</item>
+
+        <!-- Secondary brand color (Teal Accent) -->
         <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
         <item name="colorOnSecondary">@color/colorOnSecondary</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="colorSecondaryContainer">#CCFBF1</item> <!-- Soft Teal container -->
+        <item name="colorOnSecondaryContainer">@color/colorSecondaryVariant</item>
+
+        <!-- General Layout Attributes -->
+        <item name="android:statusBarColor">@color/colorPrimary</item>
         <item name="android:windowBackground">@color/backgroundColor</item>
+        <item name="colorSurface">@color/surfaceColor</item>
+        <item name="colorSurfaceVariant">@color/colorSurfaceVariant</item>
+        <item name="colorOutline">@color/colorOutline</item>
+        <item name="colorError">@color/errorColor</item>
+
+        <!-- Default Styling overrides for application-wide sync -->
+        <item name="materialButtonStyle">@style/Widget.App.Button</item>
+        <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
+        <item name="materialCardViewStyle">@style/Widget.App.CardView</item>
     </style>
 
     <style name="Theme.TimViecApp" parent="Base.Theme.TimViecApp" />
+
+    <!-- Style for rounded button (12dp corner radius) -->
+    <style name="Widget.App.Button" parent="Widget.Material3.Button">
+        <item name="shapeAppearance">@style/ShapeAppearance.App.Button</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ShapeAppearance.App.Button" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <!-- Style for elegant Outlined TextInputLayout (12dp corners) -->
+    <style name="Widget.App.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/colorPrimary</item>
+        <item name="boxStrokeWidth">1.2dp</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="hintTextColor">@color/colorPrimary</item>
+        <item name="placeholderTextColor">@color/textPlaceholder</item>
+        <item name="startIconTint">@color/textSecondary</item>
+        <item name="endIconTint">@color/textSecondary</item>
+        <item name="boxStrokeErrorColor">@color/errorColor</item>
+        <item name="errorIconTint">@color/errorColor</item>
+        <item name="errorTextColor">@color/errorColor</item>
+    </style>
+
+    <!-- Style for modern CardView (16dp rounded corners, elegant elevation) -->
+    <style name="Widget.App.CardView" parent="Widget.Material3.CardView.Filled">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="cardBackgroundColor">@color/surfaceColor</item>
+    </style>
 </resources>

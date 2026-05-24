@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@color/backgroundColor"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,276 +13,464 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/ivAvatar"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp"
-            android:src="@drawable/ic_launcher_background" />
-
-        <com.google.android.material.textfield.TextInputLayout
+        <!-- Profile Top Summary Card -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="Email (Không thể thay đổi)"
-            app:boxCornerRadiusBottomEnd="8dp"
-            app:boxCornerRadiusBottomStart="8dp"
-            app:boxCornerRadiusTopEnd="8dp"
-            app:boxCornerRadiusTopStart="8dp">
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/white">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etEmail"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:enabled="false"
-                android:textColor="@color/black"
-                android:inputType="textEmailAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="24dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="Họ và tên"
-            app:boxCornerRadiusBottomEnd="8dp"
-            app:boxCornerRadiusBottomStart="8dp"
-            app:boxCornerRadiusTopEnd="8dp"
-            app:boxCornerRadiusTopStart="8dp">
+                <!-- Circular Avatar -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardAvatar"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    app:cardCornerRadius="48dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="2dp"
+                    app:strokeColor="@color/colorPrimary">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:inputType="textPersonName" />
-        </com.google.android.material.textfield.TextInputLayout>
+                    <ImageView
+                        android:id="@+id/ivAvatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_profile"
+                        app:tint="@color/colorPrimary" />
+                </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="Tuổi"
-            app:boxCornerRadiusBottomEnd="8dp"
-            app:boxCornerRadiusBottomStart="8dp"
-            app:boxCornerRadiusTopEnd="8dp"
-            app:boxCornerRadiusTopStart="8dp">
+                <!-- Profile summary text (satisfying txtProfileName and txtProfileEmail request) -->
+                <TextView
+                    android:id="@+id/txtProfileName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Tên tài khoản"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etAge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:id="@+id/txtProfileEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="email@workhub.com"
+                    android:textColor="@color/textSecondary"
+                    android:textSize="14sp" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="Giới tính"
-            app:boxCornerRadiusBottomEnd="8dp"
-            app:boxCornerRadiusBottomStart="8dp"
-            app:boxCornerRadiusTopEnd="8dp"
-            app:boxCornerRadiusTopStart="8dp">
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etGender"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:hint="Địa chỉ"
-            app:boxCornerRadiusBottomEnd="8dp"
-            app:boxCornerRadiusBottomStart="8dp"
-            app:boxCornerRadiusTopEnd="8dp"
-            app:boxCornerRadiusTopStart="8dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etAddress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:inputType="textPostalAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <ProgressBar
-            android:id="@+id/progressBar"
+        <!-- Profile Details Section Header -->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSave"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Lưu thông tin"
+            android:layout_marginBottom="12dp"
+            android:text="📝 Thông tin cá nhân"
+            android:textColor="@color/textPrimary"
             android:textSize="16sp"
-            app:cornerRadius="8dp"
-            android:layout_marginBottom="16dp" />
+            android:textStyle="bold" />
 
-        <!-- Bảng điều khiển Ứng viên (Candidate Panel) -->
+        <!-- Profile Fields Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- Email field (Disabled M3 outline) -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.App.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Địa chỉ Email (Cố định)"
+                    app:startIconDrawable="@drawable/ic_email">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:textColor="@color/textSecondary"
+                        android:textSize="15sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Full Name field -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.App.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Họ và tên"
+                    app:startIconDrawable="@drawable/ic_profile">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="15sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Age field -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.App.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Tuổi"
+                    app:startIconDrawable="@drawable/ic_profile">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etAge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="15sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Gender field -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.App.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Giới tính (Nam / Nữ / Khác)"
+                    app:startIconDrawable="@drawable/ic_profile">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etGender"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="15sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Address field -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.App.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:hint="Địa chỉ cư trú"
+                    app:startIconDrawable="@drawable/ic_location">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPostalAddress"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="15sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Loading indicator -->
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"
+                    android:indeterminateTint="@color/colorPrimary"
+                    android:visibility="gone" />
+
+                <!-- Save button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSave"
+                    style="@style/Widget.App.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:text="Lưu thông tin"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Candidate Dashboard (Bảng điều khiển Ứng viên) -->
         <LinearLayout
             android:id="@+id/layoutCandidatePanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="16dp"
-            android:visibility="gone">
+            android:layout_marginBottom="24dp"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="💼 Bảng điều khiển Ứng viên"
+                android:textColor="@color/textPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="BẢNG ĐIỀU KHIỂN ỨNG VIÊN"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"
-                android:layout_marginTop="8dp" />
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="@color/white">
 
-            <!-- Nút Lịch sử ứng tuyển -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnMyResumes"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="📝 Lịch sử / Công việc đã ứng tuyển"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="8dp">
 
-            <!-- Nút Đăng ký nhận việc -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSubscriber"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="🔔 Đăng ký nhận tin tuyển dụng"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                    <!-- Lịch sử ứng tuyển -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnMyResumes"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Lịch sử / Công việc đã ứng tuyển"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp"
+                        app:icon="@drawable/ic_briefcase"
+                        app:iconTint="@color/colorPrimary"
+                        app:iconPadding="16dp" />
 
-            <!-- Nút Yêu cầu nâng cấp lên Nhà tuyển dụng -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnRequestUpgrade"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="🚀 Nâng cấp lên tài khoản tuyển dụng"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:background="@color/colorOutline" />
 
+                    <!-- Đăng ký nhận tin tuyển dụng -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSubscriber"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Đăng ký nhận tin tuyển dụng"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp"
+                        app:icon="@drawable/ic_notification"
+                        app:iconTint="@color/colorPrimary"
+                        app:iconPadding="16dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:background="@color/colorOutline" />
+
+                    <!-- Nâng cấp lên nhà tuyển dụng -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRequestUpgrade"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Nâng cấp lên tài khoản tuyển dụng"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp"
+                        app:icon="@drawable/ic_profile"
+                        app:iconTint="@color/colorPrimary"
+                        app:iconPadding="16dp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
-        <!-- Bảng điều khiển Quản trị (Admin Panel) -->
+        <!-- Admin / Recruiter Dashboard (Bảng điều khiển Quản trị) -->
         <LinearLayout
             android:id="@+id/layoutAdminPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="16dp"
-            android:visibility="gone">
+            android:layout_marginBottom="24dp"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="👑 Bảng Quản trị &amp; Tuyển dụng"
+                android:textColor="@color/textPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="BẢNG QUẢN TRỊ &amp; TUYỂN DỤNG"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"
-                android:layout_marginTop="8dp" />
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="@color/white">
 
-            <!-- Nút Quản lý công việc (HR + ADMIN) -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnManageJobs"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="💼 Quản lý các việc làm đã đăng"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="8dp">
 
-            <!-- Nút Quản lý công ty (HR + ADMIN) -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnManageCompanies"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="🏢 Quản lý công ty"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                    <!-- Quản lý công việc -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnManageJobs"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Quản lý các việc làm đã đăng"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp"
+                        app:icon="@drawable/ic_briefcase"
+                        app:iconTint="@color/colorPrimary"
+                        app:iconPadding="16dp" />
 
-            <!-- Nút Quản lý CV (HR + ADMIN) -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnManageResumes"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="📄 Kiểm duyệt CV ứng tuyển"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:background="@color/colorOutline" />
 
-            <!-- Nút Quản lý kỹ năng (ADMIN ONLY) -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnManageSkills"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="🛠️ Quản lý danh mục Kỹ năng"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:visibility="gone" />
+                    <!-- Quản lý công ty -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnManageCompanies"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Quản lý công ty"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp"
+                        app:icon="@drawable/ic_company"
+                        app:iconTint="@color/colorPrimary"
+                        app:iconPadding="16dp" />
 
-            <!-- Nút Quản lý người dùng (ADMIN ONLY) -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnManageUsers"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="👤 Quản lý người dùng"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:visibility="gone" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:background="@color/colorOutline" />
 
-            <!-- Nút Duyệt yêu cầu nâng cấp vai trò (ADMIN ONLY) -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnManageRoleUpgrades"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="👑 Duyệt yêu cầu nâng cấp vai trò"
-                android:textAlignment="viewStart"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:visibility="gone" />
+                    <!-- Kiểm duyệt CV -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnManageResumes"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Kiểm duyệt CV ứng tuyển"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp"
+                        app:icon="@drawable/ic_profile"
+                        app:iconTint="@color/colorPrimary"
+                        app:iconPadding="16dp" />
 
+                    <!-- Quản lý Kỹ năng (Admin Only) -->
+                    <View
+                        android:id="@+id/divManageSkills"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:background="@color/colorOutline" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnManageSkills"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Quản lý danh mục Kỹ năng"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp"
+                        app:icon="@drawable/ic_more"
+                        app:iconTint="@color/colorPrimary"
+                        app:iconPadding="16dp" />
+
+                    <!-- Quản lý người dùng (Admin Only) -->
+                    <View
+                        android:id="@+id/divManageUsers"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:background="@color/colorOutline" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnManageUsers"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Quản lý người dùng"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp"
+                        app:icon="@drawable/ic_profile"
+                        app:iconTint="@color/colorPrimary"
+                        app:iconPadding="16dp" />
+
+                    <!-- Duyệt yêu cầu nâng cấp (Admin Only) -->
+                    <View
+                        android:id="@+id/divManageRoleUpgrades"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:background="@color/colorOutline" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnManageRoleUpgrades"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Duyệt yêu cầu nâng cấp vai trò"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp"
+                        app:icon="@drawable/ic_add"
+                        app:iconTint="@color/colorPrimary"
+                        app:iconPadding="16dp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
+        <!-- Logout Action (Nút Đăng xuất soft-red style) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogout"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Đăng xuất"
-            android:textColor="@color/colorPrimary"
-            android:textSize="16sp"
-            app:cornerRadius="8dp"
-            app:strokeColor="@color/colorPrimary" />
+            android:layout_height="54dp"
+            android:text="Đăng xuất tài khoản"
+            android:textColor="@color/darkRedText"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/softRed"
+            app:cornerRadius="12dp"
+            app:rippleColor="#FCA5A5"
+            android:layout_marginBottom="24dp"
+            app:icon="@drawable/ic_profile"
+            app:iconTint="@color/darkRedText"
+            app:iconPadding="10dp" />
 
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

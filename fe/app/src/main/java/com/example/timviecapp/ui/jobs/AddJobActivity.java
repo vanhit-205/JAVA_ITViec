@@ -2,16 +2,19 @@ package com.example.timviecapp.ui.jobs;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.timviecapp.databinding.ActivityAddJobBinding;
+import com.example.timviecapp.models.company.CompanyResponse;
 import com.example.timviecapp.models.job.JobRequest;
 import com.example.timviecapp.models.job.JobResponse;
 import com.example.timviecapp.models.skill.SkillResponse;
 import com.example.timviecapp.ui.admin.SkillPickerDialog;
+import com.example.timviecapp.viewmodels.CompanyViewModel;
 import com.example.timviecapp.viewmodels.JobViewModel;
 import com.example.timviecapp.viewmodels.SkillViewModel;
 import com.google.android.material.chip.Chip;
@@ -26,12 +29,21 @@ public class AddJobActivity extends AppCompatActivity {
     private ActivityAddJobBinding binding;
     private JobViewModel viewModel;
     private SkillViewModel skillViewModel;
+    private CompanyViewModel companyViewModel;
     private int jobId = -1;
     private boolean isEditMode = false;
 
     private List<SkillResponse> allSkills = new ArrayList<>();
     private List<Integer> selectedSkillIds = new ArrayList<>();
     private List<SkillResponse> selectedSkills = new ArrayList<>();
+
+    // Danh sách cấp bậc có sẵn
+    private static final String[] LEVELS = {"INTERN", "FRESHER", "JUNIOR", "MIDDLE", "SENIOR"};
+    private static final String[] LEVEL_DISPLAY_NAMES = {"Intern", "Fresher", "Junior", "Middle", "Senior"};
+
+    // Danh sách công ty
+    private List<CompanyResponse> allCompanies = new ArrayList<>();
+    private int selectedCompanyId = -1;
 
     private final java.util.Calendar startCalendar = java.util.Calendar.getInstance();
     private final java.util.Calendar endCalendar = java.util.Calendar.getInstance();
@@ -46,14 +58,17 @@ public class AddJobActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(JobViewModel.class);
         skillViewModel = new ViewModelProvider(this).get(SkillViewModel.class);
+        companyViewModel = new ViewModelProvider(this).get(CompanyViewModel.class);
 
         jobId = getIntent().getIntExtra("jobId", -1);
         isEditMode = jobId != -1;
 
         setupToolbar();
+        setupLevelDropdown();
         setupListeners();
         observeViewModel();
         loadAllSkills();
+        loadAllCompanies();
 
         if (isEditMode) {
             binding.toolbar.setTitle("Sửa công việc");
@@ -68,6 +83,66 @@ public class AddJobActivity extends AppCompatActivity {
 
     private void setupToolbar() {
         binding.toolbar.setNavigationOnClickListener(v -> onBackPressed());
+    }
+
+    /**
+     * Thiết lập dropdown cấp bậc với các giá trị có sẵn
+     */
+    private void setupLevelDropdown() {
+        ArrayAdapter<String> levelAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                LEVEL_DISPLAY_NAMES
+        );
+        binding.etLevel.setAdapter(levelAdapter);
+        binding.etLevel.setOnItemClickListener((parent, view, position, id) -> {
+            // Lưu giá trị enum thực tế (INTERN, FRESHER, ...)
+            binding.etLevel.setTag(LEVELS[position]);
+        });
+    }
+
+    /**
+     * Tải danh sách công ty từ API và thiết lập dropdown
+     */
+    private void loadAllCompanies() {
+        companyViewModel.getCompanies(0, 200).observe(this, response -> {
+            companyViewModel.setLoading(false);
+            if (response != null && response.isSuccess() && response.getData() != null
+                    && response.getData().getItems() != null) {
+                allCompanies = response.getData().getItems();
+                setupCompanyDropdown();
+            }
+        });
+    }
+
+    /**
+     * Thiết lập dropdown công ty với danh sách tải từ API
+     */
+    private void setupCompanyDropdown() {
+        List<String> companyNames = new ArrayList<>();
+        for (CompanyResponse company : allCompanies) {
+            companyNames.add(company.getName());
+        }
+
+        ArrayAdapter<String> companyAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                companyNames
+        );
+        binding.etCompanyId.setAdapter(companyAdapter);
+        binding.etCompanyId.setOnItemClickListener((parent, view, position, id) -> {
+            selectedCompanyId = allCompanies.get(position).getId();
+        });
+
+        // Nếu đang ở chế độ sửa, set lại công ty đã chọn
+        if (isEditMode && selectedCompanyId != -1) {
+            for (int i = 0; i < allCompanies.size(); i++) {
+                if (allCompanies.get(i).getId() == selectedCompanyId) {
+                    binding.etCompanyId.setText(allCompanies.get(i).getName(), false);
+                    break;
+                }
+            }
+        }
     }
 
     private void setupDefaultDates() {
@@ -99,10 +174,26 @@ public class AddJobActivity extends AppCompatActivity {
                 binding.etLocation.setText(job.getLocation());
                 binding.etSalary.setText(String.valueOf(job.getSalary()));
                 binding.etQuantity.setText(String.valueOf(job.getQuantity()));
-                binding.etLevel.setText(job.getLevel());
-                if (job.getCompany() != null) {
-                    binding.etCompanyId.setText(String.valueOf(job.getCompany().getId()));
+
+                // Set level dropdown
+                String level = job.getLevel();
+                if (level != null) {
+                    String levelUpper = level.toUpperCase();
+                    for (int i = 0; i < LEVELS.length; i++) {
+                        if (LEVELS[i].equals(levelUpper)) {
+                            binding.etLevel.setText(LEVEL_DISPLAY_NAMES[i], false);
+                            binding.etLevel.setTag(LEVELS[i]);
+                            break;
+                        }
+                    }
                 }
+
+                // Set company dropdown
+                if (job.getCompany() != null) {
+                    selectedCompanyId = job.getCompany().getId();
+                    binding.etCompanyId.setText(job.getCompany().getName(), false);
+                }
+
                 binding.etDescription.setText(job.getDescription());
 
                 // Pre-populate selected skills
@@ -192,18 +283,30 @@ public class AddJobActivity extends AppCompatActivity {
             String location = binding.etLocation.getText().toString().trim();
             String salaryStr = binding.etSalary.getText().toString().trim();
             String quantityStr = binding.etQuantity.getText().toString().trim();
-            String level = binding.etLevel.getText().toString().trim().toUpperCase();
-            String companyIdStr = binding.etCompanyId.getText().toString().trim();
             String description = binding.etDescription.getText().toString().trim();
 
-            if (name.isEmpty() || location.isEmpty() || salaryStr.isEmpty() || quantityStr.isEmpty() || level.isEmpty() || companyIdStr.isEmpty()) {
+            // Lấy level từ tag (giá trị enum thực tế)
+            String level = binding.etLevel.getTag() != null
+                    ? binding.etLevel.getTag().toString()
+                    : binding.etLevel.getText().toString().trim().toUpperCase();
+
+            if (name.isEmpty() || location.isEmpty() || salaryStr.isEmpty() || quantityStr.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (level.isEmpty()) {
+                Toast.makeText(this, "Vui lòng chọn cấp bậc", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (selectedCompanyId == -1) {
+                Toast.makeText(this, "Vui lòng chọn công ty", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             double salary = Double.parseDouble(salaryStr);
             int quantity = Integer.parseInt(quantityStr);
-            int companyId = Integer.parseInt(companyIdStr);
 
             apiDateFormat.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
             String startDate = apiDateFormat.format(startCalendar.getTime());
@@ -211,7 +314,7 @@ public class AddJobActivity extends AppCompatActivity {
 
             JobRequest request = new JobRequest(
                     name, location, salary, quantity, level, description,
-                    startDate, endDate, true, companyId, selectedSkillIds
+                    startDate, endDate, true, selectedCompanyId, selectedSkillIds
             );
 
             binding.progressBar.setVisibility(View.VISIBLE);

@@ -79,28 +79,35 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilLevel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:hint="Cấp bậc (Intern, Fresher, Junior...)">
-                <com.google.android.material.textfield.TextInputEditText
+                android:hint="Cấp bậc"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                <AutoCompleteTextView
                     android:id="@+id/etLevel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:cursorVisible="false" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCompany"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:hint="ID Công ty">
-                <com.google.android.material.textfield.TextInputEditText
+                android:hint="Công ty"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                <AutoCompleteTextView
                     android:id="@+id/etCompanyId"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="1"
-                    android:inputType="number" />
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:cursorVisible="false" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout

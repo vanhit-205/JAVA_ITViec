@@ -5,13 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
+    android:layout_marginVertical="6dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
-    app:strokeWidth="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#F1F5F9"
     app:cardBackgroundColor="@color/surfaceColor">
 
     <LinearLayout
@@ -20,61 +21,66 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Top Section: Logo & Job Details -->
-        <RelativeLayout
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- Header: Company Logo + Job Title + Company -->
+        <!-- ═══════════════════════════════════════════ -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <!-- Round Company Logo -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardCompanyLogo"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="#F1F5F9"
-                app:strokeWidth="0dp">
+            <!-- Company Logo Placeholder -->
+            <FrameLayout
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_company_logo">
 
                 <ImageView
                     android:id="@+id/ivCompanyLogo"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_company"
                     app:tint="@color/colorPrimary" />
-            </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
 
-            <!-- Job Title and Company Name -->
+            <!-- Job Title & Company Name -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/cardCompanyLogo"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tvJobTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
                     android:textColor="@color/textPrimary"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
+                    android:lineSpacingExtra="2sp"
                     tools:text="Senior Android Developer (Java)" />
 
                 <TextView
                     android:id="@+id/tvCompanyName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="3dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:textColor="@color/textSecondary"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     tools:text="VNG Corporation" />
             </LinearLayout>
-        </RelativeLayout>
+        </LinearLayout>
 
-        <!-- Middle Section: Location, Salary & Badge Level -->
+        <!-- ══════════════════════════════════════ -->
+        <!-- Info Row: Location + Level Badges      -->
+        <!-- ══════════════════════════════════════ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -86,103 +92,151 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_location_chip"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp">
 
                 <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
                     android:src="@drawable/ic_location"
-                    app:tint="@color/textSecondary" />
+                    app:tint="#C2410C" />
 
                 <TextView
                     android:id="@+id/tvLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:textColor="@color/textSecondary"
-                    android:textSize="13sp"
+                    android:layout_marginStart="5dp"
+                    android:textColor="#9A3412"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
                     tools:text="Hồ Chí Minh" />
             </LinearLayout>
 
             <View
-                android:layout_width="1dp"
-                android:layout_height="12dp"
-                android:layout_marginHorizontal="12dp"
-                android:background="@color/colorOutline" />
+                android:layout_width="8dp"
+                android:layout_height="0dp" />
 
-            <!-- Level Chip -->
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipLevel"
-                style="@style/Widget.Material3.Chip.Assist"
+            <!-- Level Badge -->
+            <LinearLayout
+                android:id="@+id/layoutLevelBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="11sp"
-                app:chipMinHeight="24dp"
-                app:chipCornerRadius="6dp"
-                app:chipBackgroundColor="#F1F5F9"
-                app:chipStrokeWidth="0dp"
-                tools:text="Senior" />
+                android:background="@drawable/bg_level_chip"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp">
+
+                <TextView
+                    android:id="@+id/tvLevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#1E40AF"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:text="SENIOR" />
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- Salary Highlight Section -->
+        <!-- ══════════════════════════════════ -->
+        <!-- Salary Badge                      -->
+        <!-- ══════════════════════════════════ -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@color/successGreenBg"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="6dp"
+            android:background="@drawable/bg_salary_badge"
             android:gravity="center_vertical"
-            android:layout_gravity="start">
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_salary"
+                app:tint="@color/successGreen" />
 
             <TextView
                 android:id="@+id/tvSalary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
                 android:textColor="@color/successGreen"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                tools:text="25,000,000 - 35,000,000 VNĐ" />
+                tools:text="25.000.000 - 35.000.000 đ" />
         </LinearLayout>
 
-        <!-- Skills ChipGroup -->
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/cgSkills"
+        <!-- ══════════════════════════════════ -->
+        <!-- Skills Section                    -->
+        <!-- ══════════════════════════════════ -->
+        <LinearLayout
+            android:id="@+id/layoutSkills"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:chipSpacingVertical="4dp"
-            app:chipSpacingHorizontal="6dp" />
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <!-- Divider Line -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cgSkills"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:chipSpacingVertical="4dp"
+                app:chipSpacingHorizontal="6dp"
+                app:singleLine="true" />
+        </LinearLayout>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- Bottom: Description + Date              -->
+        <!-- ═══════════════════════════════════════ -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginVertical="10dp"
-            android:background="@color/colorOutline" />
+            android:layout_marginTop="12dp"
+            android:background="#F1F5F9" />
 
         <!-- Job Description Snippet -->
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:ellipsize="end"
+            android:lineSpacingExtra="3sp"
             android:maxLines="2"
             android:textColor="@color/textSecondary"
             android:textSize="13sp"
-            android:lineSpacingExtra="2sp"
             tools:text="Tham gia phát triển hệ sinh thái ứng dụng Android của VNG. Yêu cầu 3 năm kinh nghiệm với Java/Kotlin và các thư viện chuyên dụng..." />
 
-        <!-- Date stamp -->
-        <TextView
-            android:id="@+id/tvDate"
+        <!-- Date Row with icon -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/textPlaceholder"
-            android:textSize="11sp"
-            tools:text="Ngày bắt đầu: 2026-05-10" />
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="13dp"
+                android:layout_height="13dp"
+                android:src="@drawable/ic_calendar"
+                app:tint="@color/textPlaceholder" />
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textColor="@color/textPlaceholder"
+                android:textSize="12sp"
+                tools:text="Ngày bắt đầu: 24/05/2026" />
+        </LinearLayout>
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

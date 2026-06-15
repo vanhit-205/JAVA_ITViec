@@ -1,10 +1,13 @@
 package com.example.timviecapp.ui.adapters;
 
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.timviecapp.R;
 import com.example.timviecapp.databinding.ItemJobBinding;
 import com.example.timviecapp.models.job.JobResponse;
 import com.example.timviecapp.models.skill.SkillResponse;
@@ -67,7 +70,15 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
             binding.tvJobTitle.setText(job.getName());
             binding.tvCompanyName.setText(job.getCompany() != null ? job.getCompany().getName() : "N/A");
             binding.tvLocation.setText(job.getLocation());
-            binding.chipLevel.setText(job.getLevel());
+            
+            // Level badge (now a TextView instead of Chip)
+            String level = job.getLevel();
+            if (level != null && !level.isEmpty()) {
+                binding.tvLevel.setText(level.toUpperCase());
+                binding.layoutLevelBadge.setVisibility(View.VISIBLE);
+            } else {
+                binding.layoutLevelBadge.setVisibility(View.GONE);
+            }
             
             NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
             binding.tvSalary.setText(currencyFormat.format(job.getSalary()));
@@ -78,6 +89,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
             // Render skill chips (tối đa 3, phần còn lại hiện "+N nữa")
             binding.cgSkills.removeAllViews();
             if (job.getSkills() != null && !job.getSkills().isEmpty()) {
+                binding.layoutSkills.setVisibility(View.VISIBLE);
                 int max = Math.min(3, job.getSkills().size());
                 for (int i = 0; i < max; i++) {
                     SkillResponse skill = job.getSkills().get(i);
@@ -86,9 +98,13 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
                     chip.setChipMinHeight(0f);
                     chip.setClickable(false);
                     chip.setCheckable(false);
-                    chip.setChipBackgroundColorResource(com.example.timviecapp.R.color.colorPrimary);
-                    chip.setTextColor(itemView.getContext().getResources().getColor(android.R.color.white));
+                    chip.setChipBackgroundColorResource(R.color.colorSurfaceVariant);
+                    chip.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.textPrimary));
                     chip.setTextSize(11f);
+                    chip.setChipCornerRadius(8f);
+                    chip.setChipStrokeColorResource(R.color.colorOutline);
+                    chip.setChipStrokeWidth(1f);
+                    chip.setEnsureMinTouchTargetSize(false);
                     binding.cgSkills.addView(chip);
                 }
                 if (job.getSkills().size() > 3) {
@@ -98,8 +114,14 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
                     more.setClickable(false);
                     more.setCheckable(false);
                     more.setTextSize(11f);
+                    more.setChipBackgroundColorResource(R.color.colorSurfaceVariant);
+                    more.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.textSecondary));
+                    more.setChipCornerRadius(8f);
+                    more.setEnsureMinTouchTargetSize(false);
                     binding.cgSkills.addView(more);
                 }
+            } else {
+                binding.layoutSkills.setVisibility(View.GONE);
             }
         }
     }

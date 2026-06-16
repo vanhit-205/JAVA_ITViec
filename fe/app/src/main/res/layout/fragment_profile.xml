@@ -451,6 +451,27 @@
                         app:iconTint="@color/colorPrimary"
                         app:iconPadding="16dp" />
 
+                    <!-- Quản lý Subscriber (Admin Only) -->
+                    <View
+                        android:id="@+id/divManageSubscribers"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:background="@color/colorOutline" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnManageSubscribers"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Quản lý Người đăng ký nhận tin"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp"
+                        app:icon="@drawable/ic_notification"
+                        app:iconTint="@color/colorPrimary"
+                        app:iconPadding="16dp" />
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

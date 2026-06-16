@@ -17,6 +17,7 @@ import com.example.timviecapp.models.user.UpdateUserRequest;
 import com.example.timviecapp.ui.admin.SkillManagementActivity;
 import com.example.timviecapp.ui.admin.UserManagementActivity;
 import com.example.timviecapp.ui.admin.ManageRoleUpgradesActivity;
+import com.example.timviecapp.ui.admin.ManageSubscribersActivity;
 import com.example.timviecapp.ui.auth.LoginActivity;
 import com.example.timviecapp.ui.companies.ManageCompanyActivity;
 import com.example.timviecapp.ui.jobs.ManageJobsActivity;
@@ -93,10 +94,14 @@ public class ProfileFragment extends Fragment {
                 binding.btnManageSkills.setVisibility(View.VISIBLE);
                 binding.btnManageUsers.setVisibility(View.VISIBLE);
                 binding.btnManageRoleUpgrades.setVisibility(View.VISIBLE);
+                binding.btnManageSubscribers.setVisibility(View.VISIBLE);
+                binding.divManageSubscribers.setVisibility(View.VISIBLE);
             } else {
                 binding.btnManageSkills.setVisibility(View.GONE);
                 binding.btnManageUsers.setVisibility(View.GONE);
                 binding.btnManageRoleUpgrades.setVisibility(View.GONE);
+                binding.btnManageSubscribers.setVisibility(View.GONE);
+                binding.divManageSubscribers.setVisibility(View.GONE);
             }
         } else {
             binding.layoutAdminPanel.setVisibility(View.GONE);
@@ -214,6 +219,10 @@ public class ProfileFragment extends Fragment {
 
         binding.btnManageRoleUpgrades.setOnClickListener(v -> {
             startActivity(new Intent(getContext(), ManageRoleUpgradesActivity.class));
+        });
+
+        binding.btnManageSubscribers.setOnClickListener(v -> {
+            startActivity(new Intent(getContext(), ManageSubscribersActivity.class));
         });
 
         binding.btnLogout.setOnClickListener(v -> logout());

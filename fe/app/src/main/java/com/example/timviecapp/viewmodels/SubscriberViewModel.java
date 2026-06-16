@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.timviecapp.models.common.ApiResponse;
+import com.example.timviecapp.models.common.PaginationResponse;
 import com.example.timviecapp.models.subscriber.SubscriberRequest;
 import com.example.timviecapp.models.subscriber.SubscriberResponse;
 import com.example.timviecapp.repository.SubscriberRepository;
@@ -52,6 +53,30 @@ public class SubscriberViewModel extends ViewModel {
     public LiveData<ApiResponse<SubscriberResponse>> getSubscriber(int id) {
         isLoading.setValue(true);
         return repository.getSubscriber(id);
+    }
+
+    /**
+     * Lấy danh sách subscribers phân trang (Phục vụ Admin)
+     */
+    public LiveData<ApiResponse<PaginationResponse<SubscriberResponse>>> getSubscribers(int page, int size) {
+        isLoading.setValue(true);
+        return repository.getSubscribers(page, size);
+    }
+
+    /**
+     * Xóa mềm subscriber
+     */
+    public LiveData<ApiResponse<Object>> deleteSubscriber(int id) {
+        isLoading.setValue(true);
+        return repository.deleteSubscriber(id);
+    }
+
+    /**
+     * Kích hoạt subscriber
+     */
+    public LiveData<ApiResponse<SubscriberResponse>> enableSubscriber(int id) {
+        isLoading.setValue(true);
+        return repository.enableSubscriber(id);
     }
 
     public LiveData<Boolean> getIsLoading() {

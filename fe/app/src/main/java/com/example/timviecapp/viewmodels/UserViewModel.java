@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.timviecapp.models.auth.UserResponse;
 import com.example.timviecapp.models.common.ApiResponse;
 import com.example.timviecapp.models.common.PaginationResponse;
+import com.example.timviecapp.models.user.CreateUserRequest;
 import com.example.timviecapp.models.user.UpdateUserRequest;
 import com.example.timviecapp.repository.UserRepository;
 
@@ -51,6 +52,11 @@ public class UserViewModel extends ViewModel {
     public LiveData<ApiResponse<UserResponse>> enableUser(int id) {
         isLoading.setValue(true);
         return repository.enableUser(id);
+    }
+
+    public LiveData<ApiResponse<UserResponse>> createUser(CreateUserRequest request) {
+        isLoading.setValue(true);
+        return repository.createUser(request);
     }
 
     public LiveData<Boolean> getIsLoading() {

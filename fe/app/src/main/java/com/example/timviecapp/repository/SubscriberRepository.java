@@ -138,4 +138,78 @@ public class SubscriberRepository {
 
         return data;
     }
+
+    /**
+     * Lấy danh sách subscribers phân trang (Phục vụ Admin)
+     */
+    public LiveData<ApiResponse<PaginationResponse<SubscriberResponse>>> getSubscribers(int page, int size) {
+        MutableLiveData<ApiResponse<PaginationResponse<SubscriberResponse>>> data = new MutableLiveData<>();
+        apiService.getSubscribers(page, size).enqueue(new Callback<ApiResponse<PaginationResponse<SubscriberResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<PaginationResponse<SubscriberResponse>>> call,
+                                   Response<ApiResponse<PaginationResponse<SubscriberResponse>>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    data.setValue(response.body());
+                } else {
+                    data.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<PaginationResponse<SubscriberResponse>>> call, Throwable t) {
+                Log.e(TAG, "getSubscribers error: " + t.getMessage());
+                data.setValue(null);
+            }
+        });
+        return data;
+    }
+
+    /**
+     * Xóa mềm Subscriber (Chuyển deleted = true)
+     */
+    public LiveData<ApiResponse<Object>> deleteSubscriber(int id) {
+        MutableLiveData<ApiResponse<Object>> data = new MutableLiveData<>();
+        apiService.deleteSubscriber(id).enqueue(new Callback<ApiResponse<Object>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Object>> call, Response<ApiResponse<Object>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    data.setValue(response.body());
+                } else {
+                    data.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Object>> call, Throwable t) {
+                Log.e(TAG, "deleteSubscriber error: " + t.getMessage());
+                data.setValue(null);
+            }
+        });
+        return data;
+    }
+
+    /**
+     * Kích hoạt lại Subscriber
+     */
+    public LiveData<ApiResponse<SubscriberResponse>> enableSubscriber(int id) {
+        MutableLiveData<ApiResponse<SubscriberResponse>> data = new MutableLiveData<>();
+        apiService.enableSubscriber(id).enqueue(new Callback<ApiResponse<SubscriberResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<SubscriberResponse>> call,
+                                   Response<ApiResponse<SubscriberResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    data.setValue(response.body());
+                } else {
+                    data.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<SubscriberResponse>> call, Throwable t) {
+                Log.e(TAG, "enableSubscriber error: " + t.getMessage());
+                data.setValue(null);
+            }
+        });
+        return data;
+    }
 }

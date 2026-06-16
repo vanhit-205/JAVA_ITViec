@@ -1,13 +1,18 @@
 package com.example.timviecapp.models.user;
 
+import com.google.gson.annotations.SerializedName;
+
 public class CreateUserRequest {
     private String email;
     private String password;
+
+    @SerializedName("username")
     private String name;
     private String role;
     private String address;
     private String age;
     private String gender;
+    private String phone;
 
     public CreateUserRequest(String email, String password, String name, String role) {
         this.email = email;
@@ -31,4 +36,6 @@ public class CreateUserRequest {
     public void setAge(String age) { this.age = age; }
     public String getGender() { return gender; }
     public void setGender(String gender) { this.gender = gender; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 }

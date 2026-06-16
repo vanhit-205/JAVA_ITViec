@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.timviecapp.models.auth.UserResponse;
 import com.example.timviecapp.models.common.ApiResponse;
 import com.example.timviecapp.models.common.PaginationResponse;
+import com.example.timviecapp.models.user.CreateUserRequest;
 import com.example.timviecapp.models.user.UpdateUserRequest;
 import com.example.timviecapp.network.RetrofitClient;
 import com.example.timviecapp.network.services.UserApiService;
@@ -152,6 +153,26 @@ public class UserRepository {
     public LiveData<ApiResponse<UserResponse>> enableUser(int id) {
         MutableLiveData<ApiResponse<UserResponse>> data = new MutableLiveData<>();
         apiService.enableUser(id).enqueue(new Callback<ApiResponse<UserResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    data.setValue(response.body());
+                } else {
+                    data.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+                data.setValue(null);
+            }
+        });
+        return data;
+    }
+
+    public LiveData<ApiResponse<UserResponse>> createUser(CreateUserRequest request) {
+        MutableLiveData<ApiResponse<UserResponse>> data = new MutableLiveData<>();
+        apiService.createUser(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {

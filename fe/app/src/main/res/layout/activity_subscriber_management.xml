@@ -13,7 +13,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         app:navigationIcon="@drawable/ic_back"
-        app:title="Quản lý người dùng (ADMIN)"
+        app:title="Quản lý Người đăng ký nhận tin"
         app:titleTextColor="@android:color/white"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,7 +35,7 @@
             android:background="@null"
             android:drawableStart="@drawable/ic_search"
             android:drawablePadding="8dp"
-            android:hint="Tìm kiếm bằng tên hoặc email..."
+            android:hint="Tìm kiếm người đăng ký bằng email hoặc tên..."
             android:paddingHorizontal="16dp"
             android:textColor="@color/black"
             android:textColorHint="@android:color/darker_gray"
@@ -59,7 +59,7 @@
         android:id="@+id/tvEmpty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Không tìm thấy người dùng nào"
+        android:text="Không tìm thấy người đăng ký nào"
         android:textColor="@android:color/darker_gray"
         android:textSize="16sp"
         android:visibility="gone"
@@ -70,25 +70,12 @@
 
     <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvUsers"
+        android:id="@+id/rvSubscribers"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/searchCard"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:listitem="@layout/item_user" />
-
-    <!-- Floating Action Button for adding new user -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="24dp"
-        android:src="@drawable/ic_add"
-        android:contentDescription="Thêm người dùng mới"
-        app:backgroundTint="@color/colorPrimary"
-        app:tint="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        tools:listitem="@layout/item_subscriber" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

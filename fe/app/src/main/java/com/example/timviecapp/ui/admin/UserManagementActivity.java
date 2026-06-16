@@ -4,15 +4,21 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.timviecapp.R;
 import com.example.timviecapp.databinding.ActivityUserManagementBinding;
 import com.example.timviecapp.models.auth.UserResponse;
+import com.example.timviecapp.models.user.CreateUserRequest;
 import com.example.timviecapp.models.user.UpdateUserRequest;
 import com.example.timviecapp.ui.adapters.UserAdapter;
 import com.example.timviecapp.viewmodels.UserViewModel;
@@ -40,6 +46,8 @@ public class UserManagementActivity extends AppCompatActivity {
         setupSearchBox();
         observeViewModel();
         loadUsers();
+
+        binding.fabAddUser.setOnClickListener(v -> showAddUserDialog());
     }
 
     private void setupToolbar() {
@@ -192,6 +200,113 @@ public class UserManagementActivity extends AppCompatActivity {
     private void observeViewModel() {
         viewModel.getIsLoading().observe(this, isLoading -> {
             binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        });
+    }
+
+    private void showAddUserDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_user, null);
+
+        EditText etUsername = view.findViewById(R.id.etAddUsername);
+        EditText etEmail = view.findViewById(R.id.etAddEmail);
+        EditText etPassword = view.findViewById(R.id.etAddPassword);
+        EditText etAge = view.findViewById(R.id.etAddAge);
+        EditText etPhone = view.findViewById(R.id.etAddPhone);
+        Spinner spinnerGender = view.findViewById(R.id.spinnerAddGender);
+        Spinner spinnerRole = view.findViewById(R.id.spinnerAddRole);
+        EditText etAddress = view.findViewById(R.id.etAddAddress);
+
+        // Setup Gender Spinner
+        String[] genders = {"MALE", "FEMALE", "OTHER"};
+        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, genders);
+        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerGender.setAdapter(genderAdapter);
+
+        // Setup Role Spinner
+        String[] roles = {"ROLE_CANDIDATE", "ROLE_RECRUITER", "ROLE_ADMIN"};
+        ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, roles);
+        roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRole.setAdapter(roleAdapter);
+
+        builder.setView(view)
+                .setPositiveButton("Thêm", null) // Set null to manually override close behavior
+                .setNegativeButton("Hủy", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String username = etUsername.getText().toString().trim();
+            String email = etEmail.getText().toString().trim();
+            String password = etPassword.getText().toString().trim();
+            String ageStr = etAge.getText().toString().trim();
+            String phone = etPhone.getText().toString().trim();
+            String gender = spinnerGender.getSelectedItem().toString();
+            String role = spinnerRole.getSelectedItem().toString();
+            String address = etAddress.getText().toString().trim();
+
+            if (username.length() < 3 || username.length() > 50) {
+                etUsername.setError("Tên đăng nhập phải từ 3 đến 50 ký tự");
+                return;
+            }
+            if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                etEmail.setError("Email không đúng định dạng");
+                return;
+            }
+            if (password.length() < 8 || password.length() > 100) {
+                etPassword.setError("Mật khẩu phải từ 8 đến 100 ký tự");
+                return;
+            }
+
+            Integer age = null;
+            if (!ageStr.isEmpty()) {
+                try {
+                    age = Integer.parseInt(ageStr);
+                    if (age < 18 || age > 100) {
+                        etAge.setError("Tuổi phải từ 18 đến 100");
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    etAge.setError("Tuổi không hợp lệ");
+                    return;
+                }
+            } else {
+                etAge.setError("Vui lòng nhập tuổi");
+                return;
+            }
+
+            if (!phone.isEmpty() && !phone.matches("^[0-9]{10,15}$")) {
+                etPhone.setError("Số điện thoại phải gồm 10-15 chữ số");
+                return;
+            }
+
+            CreateUserRequest request = new CreateUserRequest(email, password, username, role);
+            request.setAge(String.valueOf(age));
+            request.setGender(gender);
+            if (!phone.isEmpty()) {
+                request.setPhone(phone);
+            }
+            request.setAddress(address);
+
+            binding.progressBar.setVisibility(View.VISIBLE);
+            dialog.dismiss();
+
+            viewModel.createUser(request).observe(this, response -> {
+                binding.progressBar.setVisibility(View.GONE);
+                viewModel.setLoading(false);
+                if (response != null && response.isSuccess()) {
+                    Toast.makeText(this, "Thêm người dùng mới thành công", Toast.LENGTH_SHORT).show();
+                    loadUsers();
+                } else {
+                    String errorMsg = "Thêm người dùng mới thất bại";
+                    if (response != null && response.getError() != null && response.getError().getMessage() != null) {
+                        errorMsg += ": " + response.getError().getMessage();
+                    }
+                    Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+                }
+            });
         });
     }
 }

@@ -172,13 +172,14 @@
 
             <ImageButton
                 android:id="@+id/btnDelete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="4dp"
-                android:padding="12dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_search"
-                app:tint="#D32F2F" />
+                android:padding="8dp"
+                android:background="@drawable/bg_delete_button"
+                android:src="@drawable/ic_delete"
+                app:tint="@color/white"
+                android:contentDescription="Xóa hồ sơ" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -191,7 +191,14 @@ public class ResumeRepository {
             public void onResponse(Call<ApiResponse<Object>> call,
                                    Response<ApiResponse<Object>> response) {
                 if (response.isSuccessful()) {
-                    data.setValue(response.body());
+                    // Backend có thể trả 204 No Content (body = null)
+                    // Cần tạo sentinel response để observer biết là thành công
+                    ApiResponse<Object> result = response.body();
+                    if (result == null) {
+                        result = new ApiResponse<>();
+                        result.setSuccess(true);
+                    }
+                    data.setValue(result);
                 } else {
                     Log.e(TAG, "deleteResume failed: " + response.code());
                     data.setValue(null);

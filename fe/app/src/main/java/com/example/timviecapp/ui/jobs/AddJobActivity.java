@@ -26,12 +26,15 @@ import java.util.List;
 import java.util.Locale;
 
 public class AddJobActivity extends AppCompatActivity {
+    public static final String EXTRA_JOB_ID = "jobId";
+
     private ActivityAddJobBinding binding;
     private JobViewModel viewModel;
     private SkillViewModel skillViewModel;
     private CompanyViewModel companyViewModel;
     private int jobId = -1;
     private boolean isEditMode = false;
+
 
     private List<SkillResponse> allSkills = new ArrayList<>();
     private List<Integer> selectedSkillIds = new ArrayList<>();

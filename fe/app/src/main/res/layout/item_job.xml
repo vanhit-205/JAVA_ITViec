@@ -238,5 +238,45 @@
                 tools:text="Ngày bắt đầu: 24/05/2026" />
         </LinearLayout>
 
+        <!-- ══════════════════════════════════════════ -->
+        <!-- Action Buttons (chỉ hiện trong Manage mode) -->
+        <!-- ══════════════════════════════════════════ -->
+        <LinearLayout
+            android:id="@+id/layoutJobActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditJob"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Chỉnh sửa"
+                android:textAllCaps="false"
+                android:textSize="13sp"
+                app:strokeColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimary"
+
+                app:iconSize="16dp"
+                app:iconTint="@color/colorPrimary" />
+
+            <ImageButton
+                android:id="@+id/btnDeleteJob"
+                android:layout_width="40dp"
+                android:layout_height="36dp"
+                android:padding="6dp"
+                android:background="@drawable/bg_delete_button"
+                android:src="@drawable/ic_delete"
+                app:tint="@color/white"
+                android:contentDescription="Xóa công việc" />
+
+        </LinearLayout>
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

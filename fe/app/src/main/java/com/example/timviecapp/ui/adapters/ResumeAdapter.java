@@ -24,8 +24,21 @@ public class ResumeAdapter extends RecyclerView.Adapter<ResumeAdapter.ResumeView
     }
 
     public void setResumes(List<ResumeResponse> resumes) {
-        this.resumes = resumes;
+        // Wrap thành ArrayList mới để có thể gọi remove() an toàn
+        this.resumes = resumes != null ? new ArrayList<>(resumes) : new ArrayList<>();
         notifyDataSetChanged();
+    }
+
+    /** Xóa 1 item khỏi list ngay lập tức (optimistic update sau khi API xóa thành công) */
+    public void removeResume(ResumeResponse target) {
+        for (int i = 0; i < resumes.size(); i++) {
+            if (resumes.get(i).getId() == target.getId()) {
+                resumes.remove(i);
+                notifyItemRemoved(i);
+                notifyItemRangeChanged(i, resumes.size());
+                return;
+            }
+        }
     }
 
     @NonNull

@@ -20,13 +20,30 @@ import java.util.Locale;
 public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
     private List<JobResponse> jobs = new ArrayList<>();
     private OnJobClickListener listener;
+    private OnJobActionListener actionListener;
+    private boolean manageMode = false;
 
     public interface OnJobClickListener {
         void onJobClick(JobResponse job);
     }
 
+    public interface OnJobActionListener {
+        void onEdit(JobResponse job);
+        void onDelete(JobResponse job);
+    }
+
     public void setOnJobClickListener(OnJobClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnJobActionListener(OnJobActionListener listener) {
+        this.actionListener = listener;
+    }
+
+    /** Bật manage mode để hiện nút Sửa/Xóa trên mỗi item */
+    public void setManageMode(boolean manageMode) {
+        this.manageMode = manageMode;
+        notifyDataSetChanged();
     }
 
     public void setJobs(List<JobResponse> jobs) {
@@ -122,6 +139,19 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
                 }
             } else {
                 binding.layoutSkills.setVisibility(View.GONE);
+            }
+
+            // Hiện/ẩn hàng nút action tùy theo manage mode
+            if (manageMode) {
+                binding.layoutJobActions.setVisibility(View.VISIBLE);
+                binding.btnEditJob.setOnClickListener(v -> {
+                    if (actionListener != null) actionListener.onEdit(job);
+                });
+                binding.btnDeleteJob.setOnClickListener(v -> {
+                    if (actionListener != null) actionListener.onDelete(job);
+                });
+            } else {
+                binding.layoutJobActions.setVisibility(View.GONE);
             }
         }
     }

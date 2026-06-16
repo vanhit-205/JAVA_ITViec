@@ -153,8 +153,34 @@ public class ManageResumesActivity extends AppCompatActivity {
 
             @Override
             public void onDelete(ResumeResponse resume) {
-                Toast.makeText(ManageResumesActivity.this, "Xoá hồ sơ ứng viên (Đang phát triển)", Toast.LENGTH_SHORT).show();
+                new android.app.AlertDialog.Builder(ManageResumesActivity.this)
+                        .setTitle("Xác nhận xóa hồ sơ")
+                        .setMessage("Bạn có chắc chắn muốn xóa hồ sơ ứng tuyển của\n\""
+                                + (resume.getUsername() != null ? resume.getUsername() : "ứng viên") + "\" không?\n\n"
+                                + "Hành động này không thể hoàn tác.")
+                        .setPositiveButton("Xóa", (dialog, which) -> {
+                            binding.progressBar.setVisibility(View.VISIBLE);
+                            viewModel.deleteResume((int) resume.getId()).observe(ManageResumesActivity.this, response -> {
+                                binding.progressBar.setVisibility(View.GONE);
+                                viewModel.setLoading(false);
+                                if (response != null && response.isSuccess()) {
+                                    Toast.makeText(ManageResumesActivity.this,
+                                            "✓ Đã xóa hồ sơ thành công", Toast.LENGTH_SHORT).show();
+                                    // 1. Xóa item khỏi adapter ngay lập tức (màn hình hiện tại)
+                                    adapter.removeResume(resume);
+                                    // 2. Cập nhật bộ nhớ nền (không ảnh hưởng UI hiện tại)
+                                    //    → khi Back về trang Job/Company sẽ thấy số lượng mới
+                                    loadAllResumesDataSilent();
+                                } else {
+                                    Toast.makeText(ManageResumesActivity.this,
+                                            "Xóa thất bại. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        })
+                        .setNegativeButton("Hủy", null)
+                        .show();
             }
+
         });
 
         // 2. CompanyGroupAdapter for showing grouped companies list
@@ -228,6 +254,28 @@ public class ManageResumesActivity extends AppCompatActivity {
     }
 
     /**
+     * Reload data nền (không hiện progressBar, không Toast lỗi).
+     * Dùng sau khi xóa CV để cập nhật companyGroups/jobGroups cho các trang ngoài
+     * mà không ảnh hưởng đến màn hình CV đang xem (STATE_RESUME_LIST).
+     */
+    private void loadAllResumesDataSilent() {
+        viewModel.getResumes(0, 100).observe(this, response -> {
+            viewModel.setLoading(false);
+            if (response != null && response.isSuccess() && response.getData() != null) {
+                List<ResumeResponse> allResumes = response.getData().getItems();
+                if (allResumes == null) allResumes = new ArrayList<>();
+                // Chỉ cập nhật data trong memory, không render lại UI
+                companyGroups = groupResumesByCompany(allResumes);
+                // renderCurrentState() không xử lý STATE_RESUME_LIST → UI không thay đổi
+                if (currentNavigationState != STATE_RESUME_LIST) {
+                    renderCurrentState();
+                }
+            }
+            // Bỏ qua lỗi — đây là background sync, không cần thông báo user
+        });
+    }
+
+    /**
      * Call the backend matching algorithm to fetch resumes for a specific job,
      * which automatically scores and sorts them with the highest matching CVs on top.
      */
@@ -282,6 +330,21 @@ public class ManageResumesActivity extends AppCompatActivity {
             jobGroupAdapter.setGroups(jobGroups);
         }
         updateToolbarTitle();
+    }
+
+    /**
+     * Reload đúng màn hình mà người dùng đang xem sau khi thực hiện hành động (xóa, cập nhật...).
+     * - STATE_RESUME_LIST: Reload lại danh sách CV của job đang xem (không nhảy về màn đầu)
+     * - STATE_JOB_LIST / STATE_COMPANY_LIST: Reload toàn bộ dữ liệu
+     */
+    private void refreshCurrentView() {
+        if (currentNavigationState == STATE_RESUME_LIST && selectedJobGroup != null) {
+            // Đang xem danh sách CV của job → chỉ reload matching candidates
+            loadMatchingCandidates(selectedJobGroup);
+        } else {
+            // Đang ở màn công ty hoặc job → reload toàn bộ
+            loadAllResumesData();
+        }
     }
 
     private List<CompanyGroup> groupResumesByCompany(List<ResumeResponse> resumes) {

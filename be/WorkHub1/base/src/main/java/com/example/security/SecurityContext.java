@@ -83,9 +83,22 @@ public class SecurityContext {
     }
 
     /**
-     * Get current user's company ID from JWT claims
+     * Get current user's company ID from database or JWT claims
      */
     public Long getCurrentCompanyId() {
+        try {
+            String subject = jwt.getSubject();
+            if (subject != null) {
+                Long userId = Long.parseLong(subject);
+                User user = userRepository.find("from User u left join fetch u.company where u.id = ?1", userId).firstResult();
+                if (user != null && user.company != null) {
+                    return user.company.id;
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to get current company ID from database", e);
+        }
+
         try {
             var companyId = jwt.getClaim("companyId");
             if (companyId != null) {
@@ -98,7 +111,7 @@ public class SecurityContext {
                 }
             }
         } catch (Exception e) {
-            log.warn("Failed to get current company ID", e);
+            log.warn("Failed to get current company ID from JWT", e);
         }
         return null;
     }

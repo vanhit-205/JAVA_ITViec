@@ -94,9 +94,10 @@ public class JobService {
         return jobMapper.toDto(job);
     }
 
-    public JobResponse getById(Long id) {
+    public JobResponse getById(Long id, Long currentUserId, String currentRole, Long currentCompanyId) {
         Job job = jobRepository.findActiveById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.JOB_NOT_FOUND.code, ErrorCode.JOB_NOT_FOUND.message));
+        validateJobOwnership(job, currentUserId, currentRole, currentCompanyId);
         return jobMapper.toDto(job);
     }
 
@@ -209,11 +210,30 @@ public class JobService {
         return jobMapper.toDto(job);
     }
 
-    public PageResponse<JobResponse> getAll(PageRequest pageRequest) {
+    public PageResponse<JobResponse> getAll(PageRequest pageRequest, String currentRole, Long currentCompanyId) {
         log.info("Getting jobs - page: " + pageRequest.getPage() + ", size: " + pageRequest.getSize());
 
         var filter = filterParser.parse(pageRequest.getFilter());
         var queryResult = JobSpecification.buildQuery(filter, pageRequest.getKeyword());
+
+        // If recruiter, restrict jobs to their company only
+        if ("ROLE_RECRUITER".equals(currentRole)) {
+            if (currentCompanyId != null) {
+                if (queryResult.query != null && !queryResult.query.isEmpty()) {
+                    queryResult.query += " AND company.id = :recruiterCompanyId";
+                } else {
+                    queryResult.query = "company.id = :recruiterCompanyId";
+                }
+                queryResult.params.and("recruiterCompanyId", currentCompanyId);
+            } else {
+                if (queryResult.query != null && !queryResult.query.isEmpty()) {
+                    queryResult.query += " AND 1=0";
+                } else {
+                    queryResult.query = "1=0";
+                }
+            }
+        }
+
         Sort sort = JobSpecification.buildSort(pageRequest.getSortBy(), pageRequest.isAscending());
 
         int offset = pageRequest.getOffset();
@@ -237,13 +257,23 @@ public class JobService {
     }
 
     public PageResponse<JobResponse> search(PageRequest pageRequest, Long skillId, List<Long> skillIds,
-                                            Double salaryFrom, Double salaryTo, String location, String level) {
+                                            Double salaryFrom, Double salaryTo, String location, String level,
+                                            String currentRole, Long currentCompanyId) {
         log.info("Searching jobs with filters");
 
         List<String> conditions = new ArrayList<>();
         var params = io.quarkus.panache.common.Parameters.with("now", Instant.now());
         conditions.add("(endDate IS NULL OR endDate > :now)");
         conditions.add("deleted = false");
+
+        if ("ROLE_RECRUITER".equals(currentRole)) {
+            if (currentCompanyId != null) {
+                conditions.add("company.id = :recruiterCompanyId");
+                params.and("recruiterCompanyId", currentCompanyId);
+            } else {
+                conditions.add("1=0");
+            }
+        }
 
         if (pageRequest.getKeyword() != null && !pageRequest.getKeyword().isBlank()) {
             String kw = "%" + pageRequest.getKeyword() + "%";
@@ -254,11 +284,22 @@ public class JobService {
 
         if (skillId != null) {
             String skillQuery = "SELECT j FROM Job j JOIN j.skills s WHERE s.id = :skillId AND (j.endDate IS NULL OR j.endDate > :now) AND j.deleted = false";
-            List<Job> jobs = jobRepository.getEntityManager()
+            if ("ROLE_RECRUITER".equals(currentRole)) {
+                if (currentCompanyId != null) {
+                    skillQuery = "SELECT j FROM Job j JOIN j.skills s WHERE s.id = :skillId AND (j.endDate IS NULL OR j.endDate > :now) AND j.deleted = false AND j.company.id = :recruiterCompanyId";
+                } else {
+                    skillQuery = "SELECT j FROM Job j JOIN j.skills s WHERE 1=0";
+                }
+            }
+            var typedQuery = jobRepository.getEntityManager()
                     .createQuery(skillQuery, Job.class)
                     .setParameter("skillId", skillId)
-                    .setParameter("now", Instant.now())
-                    .getResultList();
+                    .setParameter("now", Instant.now());
+            if ("ROLE_RECRUITER".equals(currentRole) && currentCompanyId != null) {
+                typedQuery.setParameter("recruiterCompanyId", currentCompanyId);
+            }
+            List<Job> jobs = typedQuery.getResultList();
+
             // Manual pagination
             int offset = pageRequest.getOffset();
             int limit = pageRequest.getSize();

@@ -40,7 +40,7 @@ public class JobResource {
         Long currentCompanyId = securityContext.getCurrentCompanyId();
 
         // RECRUITER can only create job for their own company
-        if ("ROLE_RECRUITER".equals(currentRole) && currentCompanyId != null && !currentCompanyId.equals(request.companyId)) {
+        if ("ROLE_RECRUITER".equals(currentRole) && (currentCompanyId == null || !currentCompanyId.equals(request.companyId))) {
             throw new com.example.exception.AppException(403, "You can only create jobs for your company");
         }
 
@@ -55,7 +55,10 @@ public class JobResource {
     @RolesAllowed({"ROLE_ADMIN", "ROLE_RECRUITER", "ROLE_CANDIDATE"})
     public Response getById(@PathParam("id") Long id) {
         log.info("Get job by ID: " + id);
-        JobResponse job = jobService.getById(id);
+        Long currentUserId = securityContext.getCurrentUserId();
+        String currentRole = securityContext.getCurrentUserRole();
+        Long currentCompanyId = securityContext.getCurrentCompanyId();
+        JobResponse job = jobService.getById(id, currentUserId, currentRole, currentCompanyId);
         return Response.ok(BaseResponse.success(job, 200, "/api/v1/jobs/" + id))
                 .build();
     }
@@ -136,7 +139,10 @@ public class JobResource {
         pageRequest.setKeyword(keyword);
         pageRequest.setFilter(filter);
 
-        PageResponse<JobResponse> response = jobService.getAll(pageRequest);
+        String currentRole = securityContext.getCurrentUserRole();
+        Long currentCompanyId = securityContext.getCurrentCompanyId();
+
+        PageResponse<JobResponse> response = jobService.getAll(pageRequest, currentRole, currentCompanyId);
         return Response.ok(BaseResponse.success(response, 200, "/api/v1/jobs"))
                 .build();
     }
@@ -179,8 +185,11 @@ public class JobResource {
         pageRequest.setKeyword(keyword);
         pageRequest.setFilter(filter);
 
+        String currentRole = securityContext.getCurrentUserRole();
+        Long currentCompanyId = securityContext.getCurrentCompanyId();
+
         PageResponse<JobResponse> response = jobService.search(pageRequest, skillId, skillIds,
-                salaryFrom, salaryTo, location, level);
+                salaryFrom, salaryTo, location, level, currentRole, currentCompanyId);
         return Response.ok(BaseResponse.success(response, 200, "/api/v1/jobs/search"))
                 .build();
     }
@@ -203,7 +212,10 @@ public class JobResource {
         pageRequest.setSortBy(sortBy);
         pageRequest.setDirection(direction);
 
-        PageResponse<JobResponse> response = jobService.search(pageRequest, skillId, null, null, null, null, null);
+        String currentRole = securityContext.getCurrentUserRole();
+        Long currentCompanyId = securityContext.getCurrentCompanyId();
+
+        PageResponse<JobResponse> response = jobService.search(pageRequest, skillId, null, null, null, null, null, currentRole, currentCompanyId);
         return Response.ok(BaseResponse.success(response, 200, "/api/v1/jobs/skills/" + skillId))
                 .build();
     }
@@ -219,6 +231,15 @@ public class JobResource {
             @QueryParam("direction") @DefaultValue("DESC") String direction) {
 
         log.info("Get jobs for company: " + companyId);
+
+        String currentRole = securityContext.getCurrentUserRole();
+        Long currentCompanyId = securityContext.getCurrentCompanyId();
+
+        if ("ROLE_RECRUITER".equals(currentRole)) {
+            if (currentCompanyId == null || !currentCompanyId.equals(companyId)) {
+                throw new com.example.exception.AppException(403, "You can only view jobs of your company");
+            }
+        }
 
         PageRequest pageRequest = new PageRequest();
         pageRequest.setPage(page);

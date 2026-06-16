@@ -82,12 +82,13 @@ public class ResumeResource {
         log.info("Get resume by ID: " + id);
         Long currentUserId = securityContext.getCurrentUserId();
         String currentRole = securityContext.getCurrentUserRole();
+        Long currentCompanyId = securityContext.getCurrentCompanyId();
 
         ResumeResponse resume;
         if ("ROLE_ADMIN".equals(currentRole)) {
             resume = resumeService.getByIdAdmin(id);
         } else {
-            resume = resumeService.getById(id, currentUserId, currentRole);
+            resume = resumeService.getById(id, currentUserId, currentRole, currentCompanyId);
         }
         return Response.ok(BaseResponse.success(resume, 200, "/api/v1/resumes/" + id))
                 .build();
@@ -113,8 +114,9 @@ public class ResumeResource {
         log.info("Delete resume: " + id);
         Long currentUserId = securityContext.getCurrentUserId();
         String currentRole = securityContext.getCurrentUserRole();
+        Long currentCompanyId = securityContext.getCurrentCompanyId();
 
-        resumeService.delete(id, currentUserId, currentRole);
+        resumeService.delete(id, currentUserId, currentRole, currentCompanyId);
         return Response.ok(BaseResponse.success("Resume deleted successfully", 200, "/api/v1/resumes/" + id))
                 .build();
     }
@@ -126,8 +128,9 @@ public class ResumeResource {
         log.info("Update resume status: " + id);
         Long currentUserId = securityContext.getCurrentUserId();
         String currentRole = securityContext.getCurrentUserRole();
+        Long currentCompanyId = securityContext.getCurrentCompanyId();
 
-        ResumeResponse resume = resumeService.updateStatus(id, request, currentUserId, currentRole);
+        ResumeResponse resume = resumeService.updateStatus(id, request, currentUserId, currentRole, currentCompanyId);
         return Response.ok(BaseResponse.success(resume, 200, "/api/v1/resumes/" + id + "/status"))
                 .build();
     }
@@ -143,6 +146,8 @@ public class ResumeResource {
             @QueryParam("filter") String filter) {
 
         log.info("Get all resumes - page: " + page + ", size: " + size);
+        String currentRole = securityContext.getCurrentUserRole();
+        Long currentCompanyId = securityContext.getCurrentCompanyId();
 
         PageRequest pageRequest = new PageRequest();
         pageRequest.setPage(page);
@@ -152,7 +157,7 @@ public class ResumeResource {
         pageRequest.setKeyword(keyword);
         pageRequest.setFilter(filter);
 
-        PageResponse<ResumeResponse> response = resumeService.getAll(pageRequest);
+        PageResponse<ResumeResponse> response = resumeService.getAll(pageRequest, currentRole, currentCompanyId);
         return Response.ok(BaseResponse.success(response, 200, "/api/v1/resumes"))
                 .build();
     }
@@ -201,8 +206,10 @@ public class ResumeResource {
 
         // RECRUITER can only view resumes for their own company
         if ("ROLE_RECRUITER".equals(currentRole)) {
-            Long currentUserId = securityContext.getCurrentUserId();
-            // TODO: Validate company ownership
+            Long currentCompanyId = securityContext.getCurrentCompanyId();
+            if (currentCompanyId == null || !currentCompanyId.equals(companyId)) {
+                throw new com.example.exception.AppException(com.example.constant.ErrorCode.RESUME_ACCESS_DENIED.code, com.example.constant.ErrorCode.RESUME_ACCESS_DENIED.message);
+            }
         }
 
         PageRequest pageRequest = new PageRequest();
@@ -237,7 +244,8 @@ public class ResumeResource {
         log.info("Get matching candidates for job: " + jobId);
         Long currentUserId = securityContext.getCurrentUserId();
         String currentRole = securityContext.getCurrentUserRole();
-        List<ResumeMatchingResponse> resumes = resumeService.getMatchingCandidatesForJob(jobId, currentUserId, currentRole);
+        Long currentCompanyId = securityContext.getCurrentCompanyId();
+        List<ResumeMatchingResponse> resumes = resumeService.getMatchingCandidatesForJob(jobId, currentUserId, currentRole, currentCompanyId);
         return Response.ok(BaseResponse.success(resumes, 200, "/api/v1/resumes/job/" + jobId + "/matching-candidates"))
                 .build();
     }

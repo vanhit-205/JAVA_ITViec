@@ -17,6 +17,7 @@ import com.example.timviecapp.ui.admin.SkillPickerDialog;
 import com.example.timviecapp.viewmodels.CompanyViewModel;
 import com.example.timviecapp.viewmodels.JobViewModel;
 import com.example.timviecapp.viewmodels.SkillViewModel;
+import com.example.timviecapp.viewmodels.ProfileViewModel;
 import com.google.android.material.chip.Chip;
 
 import java.text.SimpleDateFormat;
@@ -32,6 +33,7 @@ public class AddJobActivity extends AppCompatActivity {
     private JobViewModel viewModel;
     private SkillViewModel skillViewModel;
     private CompanyViewModel companyViewModel;
+    private ProfileViewModel profileViewModel;
     private int jobId = -1;
     private boolean isEditMode = false;
 
@@ -62,6 +64,7 @@ public class AddJobActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(JobViewModel.class);
         skillViewModel = new ViewModelProvider(this).get(SkillViewModel.class);
         companyViewModel = new ViewModelProvider(this).get(CompanyViewModel.class);
+        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
         jobId = getIntent().getIntExtra("jobId", -1);
         isEditMode = jobId != -1;
@@ -71,7 +74,30 @@ public class AddJobActivity extends AppCompatActivity {
         setupListeners();
         observeViewModel();
         loadAllSkills();
-        loadAllCompanies();
+
+        if ("ROLE_RECRUITER".equals(com.example.timviecapp.utils.TokenManager.getUserRole())) {
+            // Disable the dropdown completely
+            binding.tilCompany.setEnabled(false);
+            binding.etCompanyId.setEnabled(false);
+            binding.etCompanyId.setClickable(false);
+            binding.etCompanyId.setFocusable(false);
+
+            // Fetch the recruiter's company from their profile
+            profileViewModel.getUserById(com.example.timviecapp.utils.TokenManager.getUserId()).observe(this, response -> {
+                if (response != null && response.isSuccess() && response.getData() != null) {
+                    com.example.timviecapp.models.auth.UserResponse user = response.getData();
+                    if (user.getCompanyId() != null) {
+                        selectedCompanyId = user.getCompanyId().intValue();
+                        binding.etCompanyId.setText(user.getCompanyName(), false);
+                    } else {
+                        Toast.makeText(this, "Tài khoản tuyển dụng chưa liên kết với công ty nào!", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                }
+            });
+        } else {
+            loadAllCompanies();
+        }
 
         if (isEditMode) {
             binding.toolbar.setTitle("Sửa công việc");

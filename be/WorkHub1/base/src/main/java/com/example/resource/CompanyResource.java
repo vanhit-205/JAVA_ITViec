@@ -6,7 +6,9 @@ import com.example.domain.dto.request.CompanyUpdateRequest;
 import com.example.domain.dto.response.CompanyResponse;
 import com.example.pagination.PageRequest;
 import com.example.pagination.PageResponse;
+import com.example.security.SecurityContext;
 import com.example.service.CompanyService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -24,11 +26,15 @@ public class CompanyResource {
     @Inject
     CompanyService companyService;
 
+    @Inject
+    SecurityContext securityContext;
+
     /**
      * Create new company
      * POST /api/v1/companies
      */
     @POST
+    @RolesAllowed("ROLE_ADMIN")
     public Response create(@Valid CompanyCreateRequest request) {
         log.info("Create company request");
         CompanyResponse company = companyService.create(request);
@@ -56,9 +62,12 @@ public class CompanyResource {
      */
     @PUT
     @Path("/{id}")
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_RECRUITER"})
     public Response update(@PathParam("id") Long id, @Valid CompanyUpdateRequest request) {
         log.info("Update company: " + id);
-        CompanyResponse company = companyService.update(id, request);
+        String currentRole = securityContext.getCurrentUserRole();
+        Long currentCompanyId = securityContext.getCurrentCompanyId();
+        CompanyResponse company = companyService.update(id, request, currentRole, currentCompanyId);
         return Response.ok(BaseResponse.success(company, 200, "/api/v1/companies/" + id))
                 .build();
     }
@@ -69,9 +78,12 @@ public class CompanyResource {
      */
     @DELETE
     @Path("/{id}")
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_RECRUITER"})
     public Response delete(@PathParam("id") Long id) {
         log.info("Delete company: " + id);
-        companyService.delete(id);
+        String currentRole = securityContext.getCurrentUserRole();
+        Long currentCompanyId = securityContext.getCurrentCompanyId();
+        companyService.delete(id, currentRole, currentCompanyId);
         return Response.ok(BaseResponse.success("Company deleted successfully", 200, "/api/v1/companies/" + id))
                 .build();
     }

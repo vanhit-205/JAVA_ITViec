@@ -23,9 +23,9 @@ public class RoleUpgradeRepository {
         apiService = RetrofitClient.getClient().create(RoleUpgradeApiService.class);
     }
 
-    public LiveData<ApiResponse<RoleUpgradeRequest>> requestUpgrade(String newCompanyName, String reason) {
+    public LiveData<ApiResponse<RoleUpgradeRequest>> requestUpgrade(Long companyId, String newCompanyName, String reason) {
         MutableLiveData<ApiResponse<RoleUpgradeRequest>> data = new MutableLiveData<>();
-        UpgradeRequestPayload payload = new UpgradeRequestPayload(null, newCompanyName, reason);
+        UpgradeRequestPayload payload = new UpgradeRequestPayload(companyId, newCompanyName, reason);
         apiService.requestUpgrade(payload).enqueue(new Callback<ApiResponse<RoleUpgradeRequest>>() {
             @Override
             public void onResponse(Call<ApiResponse<RoleUpgradeRequest>> call, Response<ApiResponse<RoleUpgradeRequest>> response) {

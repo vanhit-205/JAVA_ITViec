@@ -26,6 +26,10 @@ import com.example.timviecapp.ui.resume.MyResumesActivity;
 import com.example.timviecapp.ui.subscriber.SubscriberActivity;
 import com.example.timviecapp.utils.TokenManager;
 import com.example.timviecapp.viewmodels.ProfileViewModel;
+import com.example.timviecapp.repository.CompanyRepository;
+import com.example.timviecapp.models.company.CompanyResponse;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 
 public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
@@ -74,6 +78,13 @@ public class ProfileFragment extends Fragment {
                 // Hiển thị thông tin thực tế lên Card tóm tắt ở đầu
                 binding.txtProfileName.setText(response.getData().getName());
                 binding.txtProfileEmail.setText(response.getData().getEmail());
+
+                // Hiển thị tên công ty của Nhà tuyển dụng
+                if (response.getData().getCompanyName() != null && !response.getData().getCompanyName().isEmpty()) {
+                    binding.txtRecruiterCompany.setText(response.getData().getCompanyName());
+                } else {
+                    binding.txtRecruiterCompany.setText("Chưa liên kết công ty");
+                }
             } else {
                 Toast.makeText(getContext(), "Không thể tải thông tin cá nhân", Toast.LENGTH_SHORT).show();
             }
@@ -96,12 +107,22 @@ public class ProfileFragment extends Fragment {
                 binding.btnManageRoleUpgrades.setVisibility(View.VISIBLE);
                 binding.btnManageSubscribers.setVisibility(View.VISIBLE);
                 binding.divManageSubscribers.setVisibility(View.VISIBLE);
+
+                binding.btnManageCompanies.setVisibility(View.VISIBLE);
+                binding.divManageCompanies.setVisibility(View.VISIBLE);
+                binding.layoutRecruiterCompany.setVisibility(View.GONE);
+                binding.divRecruiterCompany.setVisibility(View.GONE);
             } else {
                 binding.btnManageSkills.setVisibility(View.GONE);
                 binding.btnManageUsers.setVisibility(View.GONE);
                 binding.btnManageRoleUpgrades.setVisibility(View.GONE);
                 binding.btnManageSubscribers.setVisibility(View.GONE);
                 binding.divManageSubscribers.setVisibility(View.GONE);
+
+                binding.btnManageCompanies.setVisibility(View.GONE);
+                binding.divManageCompanies.setVisibility(View.GONE);
+                binding.layoutRecruiterCompany.setVisibility(View.VISIBLE);
+                binding.divRecruiterCompany.setVisibility(View.VISIBLE);
             }
         } else {
             binding.layoutAdminPanel.setVisibility(View.GONE);
@@ -267,22 +288,76 @@ public class ProfileFragment extends Fragment {
 
     private void showUpgradeRequestDialog() {
         android.view.View dialogView = LayoutInflater.from(getContext()).inflate(com.example.timviecapp.R.layout.dialog_request_upgrade, null);
+        AutoCompleteTextView actvCompany = dialogView.findViewById(com.example.timviecapp.R.id.actvCompany);
+        com.google.android.material.textfield.TextInputLayout tilCompanyName = dialogView.findViewById(com.example.timviecapp.R.id.tilCompanyName);
         com.google.android.material.textfield.TextInputEditText etCompany = dialogView.findViewById(com.example.timviecapp.R.id.etCompanyName);
         com.google.android.material.textfield.TextInputEditText etReason = dialogView.findViewById(com.example.timviecapp.R.id.etReason);
+
+        final java.util.List<CompanyResponse> companiesList = new java.util.ArrayList<>();
+        final java.util.List<String> companyNames = new java.util.ArrayList<>();
+        final Long[] selectedCompanyId = {null};
+
+        CompanyRepository companyRepository = new CompanyRepository();
+        companyRepository.getCompanies(1, 100).observe(getViewLifecycleOwner(), response -> {
+            if (response != null && response.isSuccess() && response.getData() != null && response.getData().getItems() != null) {
+                companiesList.clear();
+                companiesList.addAll(response.getData().getItems());
+
+                companyNames.clear();
+                for (CompanyResponse comp : companiesList) {
+                    companyNames.add(comp.getName());
+                }
+                companyNames.add("Đăng ký công ty mới...");
+
+                if (getContext() != null) {
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, companyNames);
+                    actvCompany.setAdapter(adapter);
+                }
+            } else {
+                companyNames.clear();
+                companyNames.add("Đăng ký công ty mới...");
+                if (getContext() != null) {
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, companyNames);
+                    actvCompany.setAdapter(adapter);
+                }
+            }
+        });
+
+        actvCompany.setOnItemClickListener((parent, view, position, id) -> {
+            if (position == companyNames.size() - 1) {
+                selectedCompanyId[0] = null;
+                tilCompanyName.setVisibility(android.view.View.VISIBLE);
+            } else {
+                selectedCompanyId[0] = (long) companiesList.get(position).getId();
+                tilCompanyName.setVisibility(android.view.View.GONE);
+            }
+        });
 
         new com.google.android.material.dialog.MaterialAlertDialogBuilder(getContext())
                 .setTitle("Nâng cấp tài khoản tuyển dụng")
                 .setView(dialogView)
                 .setPositiveButton("Gửi yêu cầu", (dialog, which) -> {
-                    String companyName = etCompany.getText().toString().trim();
+                    String selectedOption = actvCompany.getText().toString().trim();
+                    String companyNameInput = etCompany.getText().toString().trim();
                     String reason = etReason.getText().toString().trim();
 
-                    if (companyName.isEmpty() || reason.isEmpty()) {
+                    if (selectedOption.isEmpty() || reason.isEmpty()) {
                         Toast.makeText(getContext(), "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    viewModel.requestUpgrade(companyName, reason).observe(getViewLifecycleOwner(), response -> {
+                    Long finalCompanyId = selectedCompanyId[0];
+                    String finalCompanyName = null;
+
+                    if (finalCompanyId == null) {
+                        if (companyNameInput.isEmpty()) {
+                            Toast.makeText(getContext(), "Vui lòng nhập tên công ty mới", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        finalCompanyName = companyNameInput;
+                    }
+
+                    viewModel.requestUpgrade(finalCompanyId, finalCompanyName, reason).observe(getViewLifecycleOwner(), response -> {
                         viewModel.setLoading(false);
                         if (response != null && response.isSuccess()) {
                             Toast.makeText(getContext(), "Gửi yêu cầu thành công!", Toast.LENGTH_SHORT).show();

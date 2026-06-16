@@ -35,9 +35,9 @@ public class ProfileViewModel extends ViewModel {
         return userRepository.updateUser(id, request);
     }
 
-    public LiveData<ApiResponse<RoleUpgradeRequest>> requestUpgrade(String newCompanyName, String reason) {
+    public LiveData<ApiResponse<RoleUpgradeRequest>> requestUpgrade(Long companyId, String newCompanyName, String reason) {
         isLoading.setValue(true);
-        return roleUpgradeRepository.requestUpgrade(newCompanyName, reason);
+        return roleUpgradeRepository.requestUpgrade(companyId, newCompanyName, reason);
     }
 
     public LiveData<ApiResponse<RoleUpgradeRequest>> getMyRequest() {

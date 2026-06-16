@@ -14,10 +14,22 @@ public class RoleUpgradeRequest extends PanacheEntity {
     @JsonIgnore
     public User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_id")
     @JsonIgnore
     public Company company; // Nếu muốn tham gia vào công ty sẵn có
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("companyId")
+    public Long getCompanyId() {
+        return company != null ? company.id : null;
+    }
+
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty("companyName")
+    public String getCompanyName() {
+        return company != null ? company.name : null;
+    }
 
     @Column(name = "applicant_name")
     public String applicantName;

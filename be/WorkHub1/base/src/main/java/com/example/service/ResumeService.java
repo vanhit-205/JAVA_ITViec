@@ -264,7 +264,7 @@ public class ResumeService {
         }
     }
 
-    public ResumeResponse getById(Long id, Long currentUserId, String currentRole) {
+    public ResumeResponse getById(Long id, Long currentUserId, String currentRole, Long currentCompanyId) {
         Resume resume = resumeRepository.findActiveById(id)
                 .orElseThrow(
                         () -> new AppException(ErrorCode.RESUME_NOT_FOUND.code, ErrorCode.RESUME_NOT_FOUND.message));
@@ -273,6 +273,12 @@ public class ResumeService {
         // for their company jobs
         if ("ROLE_CANDIDATE".equals(currentRole) && !resume.user.id.equals(currentUserId)) {
             throw new AppException(ErrorCode.RESUME_ACCESS_DENIED.code, ErrorCode.RESUME_ACCESS_DENIED.message);
+        }
+
+        if ("ROLE_RECRUITER".equals(currentRole)) {
+            if (resume.job == null || resume.job.company == null || !resume.job.company.id.equals(currentCompanyId)) {
+                throw new AppException(ErrorCode.RESUME_ACCESS_DENIED.code, ErrorCode.RESUME_ACCESS_DENIED.message);
+            }
         }
 
         return resumeMapper.toDto(resume);
@@ -314,17 +320,22 @@ public class ResumeService {
     }
 
     @Transactional
-    public void delete(Long id, Long currentUserId, String currentRole) {
+    public void delete(Long id, Long currentUserId, String currentRole, Long currentCompanyId) {
         log.info("Deleting resume: " + id);
 
         Resume resume = resumeRepository.findActiveById(id)
                 .orElseThrow(
                         () -> new AppException(ErrorCode.RESUME_NOT_FOUND.code, ErrorCode.RESUME_NOT_FOUND.message));
 
-        // Authorization: CANDIDATE can only delete own resume, RECRUITER and ADMIN can
-        // delete any
+        // Authorization: CANDIDATE can only delete own resume, RECRUITER can delete company's, ADMIN can delete any
         if ("ROLE_CANDIDATE".equals(currentRole) && !resume.user.id.equals(currentUserId)) {
             throw new AppException(ErrorCode.RESUME_ACCESS_DENIED.code, ErrorCode.RESUME_ACCESS_DENIED.message);
+        }
+
+        if ("ROLE_RECRUITER".equals(currentRole)) {
+            if (resume.job == null || resume.job.company == null || !resume.job.company.id.equals(currentCompanyId)) {
+                throw new AppException(ErrorCode.RESUME_ACCESS_DENIED.code, ErrorCode.RESUME_ACCESS_DENIED.message);
+            }
         }
 
         // Soft delete
@@ -337,7 +348,7 @@ public class ResumeService {
 
     @Transactional
     public ResumeResponse updateStatus(Long id, ResumeStatusUpdateRequest request, Long currentUserId,
-            String currentRole) {
+            String currentRole, Long currentCompanyId) {
         log.info("Updating resume status: " + id + " to " + request.status);
 
         Resume resume = resumeRepository.findActiveById(id)
@@ -347,6 +358,13 @@ public class ResumeService {
         // Only RECRUITER and ADMIN can update status
         if (!"ROLE_RECRUITER".equals(currentRole) && !"ROLE_ADMIN".equals(currentRole)) {
             throw new AppException(ErrorCode.FORBIDDEN.code, "Only RECRUITER or ADMIN can update resume status");
+        }
+
+        // If recruiter, check that this resume belongs to their company
+        if ("ROLE_RECRUITER".equals(currentRole)) {
+            if (resume.job == null || resume.job.company == null || !resume.job.company.id.equals(currentCompanyId)) {
+                throw new AppException(ErrorCode.RESUME_ACCESS_DENIED.code, ErrorCode.RESUME_ACCESS_DENIED.message);
+            }
         }
 
         // Validate status transition
@@ -381,11 +399,30 @@ public class ResumeService {
         }
     }
 
-    public PageResponse<ResumeResponse> getAll(PageRequest pageRequest) {
+    public PageResponse<ResumeResponse> getAll(PageRequest pageRequest, String currentRole, Long currentCompanyId) {
         log.info("Getting resumes - page: " + pageRequest.getPage() + ", size: " + pageRequest.getSize());
 
         var filter = filterParser.parse(pageRequest.getFilter());
         var queryResult = ResumeSpecification.buildQuery(filter, pageRequest.getKeyword());
+
+        // If recruiter, restrict resumes to their company jobs only
+        if ("ROLE_RECRUITER".equals(currentRole)) {
+            if (currentCompanyId != null) {
+                if (queryResult.query != null && !queryResult.query.isEmpty()) {
+                    queryResult.query += " AND job.company.id = :recruiterCompanyId";
+                } else {
+                    queryResult.query = "job.company.id = :recruiterCompanyId";
+                }
+                queryResult.params.and("recruiterCompanyId", currentCompanyId);
+            } else {
+                if (queryResult.query != null && !queryResult.query.isEmpty()) {
+                    queryResult.query += " AND 1=0";
+                } else {
+                    queryResult.query = "1=0";
+                }
+            }
+        }
+
         Sort sort = ResumeSpecification.buildSort(pageRequest.getSortBy(), pageRequest.isAscending());
 
         int offset = pageRequest.getOffset();
@@ -518,11 +555,17 @@ public class ResumeService {
         return matchingJobs;
     }
 
-    public List<ResumeMatchingResponse> getMatchingCandidatesForJob(Long jobId, Long currentUserId, String currentRole) {
+    public List<ResumeMatchingResponse> getMatchingCandidatesForJob(Long jobId, Long currentUserId, String currentRole, Long currentCompanyId) {
         log.info("Calculating candidate matching scores for job: " + jobId);
 
         Job job = jobRepository.findActiveById(jobId)
                 .orElseThrow(() -> new AppException(ErrorCode.JOB_NOT_FOUND.code, ErrorCode.JOB_NOT_FOUND.message));
+
+        if ("ROLE_RECRUITER".equals(currentRole)) {
+            if (job.company == null || !job.company.id.equals(currentCompanyId)) {
+                throw new AppException(ErrorCode.RESUME_ACCESS_DENIED.code, ErrorCode.RESUME_ACCESS_DENIED.message);
+            }
+        }
 
         List<Resume> resumes = Resume.list("job.id = ?1 AND deleted = false", jobId);
         List<ResumeMatchingResponse> matchedResumes = new ArrayList<>();

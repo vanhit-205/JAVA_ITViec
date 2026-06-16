@@ -14,6 +14,28 @@ public class UserResponse {
     private String gender;
     private String address;
 
+    @SerializedName("companyId")
+    private Integer companyId;
+
+    @SerializedName("companyName")
+    private String companyName;
+
+    public Integer getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Integer companyId) {
+        this.companyId = companyId;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
     @SerializedName("accountNonLocked")
     private Boolean accountNonLocked;
 

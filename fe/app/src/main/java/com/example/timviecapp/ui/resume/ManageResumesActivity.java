@@ -122,7 +122,11 @@ public class ManageResumesActivity extends AppCompatActivity {
         if (currentNavigationState == STATE_COMPANY_LIST) {
             binding.toolbar.setTitle("Kiểm duyệt CV");
         } else if (currentNavigationState == STATE_JOB_LIST && selectedCompanyGroup != null) {
-            binding.toolbar.setTitle(selectedCompanyGroup.getCompanyName());
+            if ("ROLE_RECRUITER".equals(com.example.timviecapp.utils.TokenManager.getUserRole())) {
+                binding.toolbar.setTitle("Chọn công việc");
+            } else {
+                binding.toolbar.setTitle(selectedCompanyGroup.getCompanyName());
+            }
         } else if (currentNavigationState == STATE_RESUME_LIST && selectedJobGroup != null) {
             binding.toolbar.setTitle(selectedJobGroup.getJobName());
         }
@@ -244,6 +248,12 @@ public class ManageResumesActivity extends AppCompatActivity {
                     // Group resumes by company
                     companyGroups = groupResumesByCompany(allResumes);
                     
+                    if ("ROLE_RECRUITER".equals(com.example.timviecapp.utils.TokenManager.getUserRole()) && !companyGroups.isEmpty()) {
+                        selectedCompanyGroup = companyGroups.get(0);
+                        jobGroups = groupResumesByJob(selectedCompanyGroup.getResumes());
+                        currentNavigationState = STATE_JOB_LIST;
+                    }
+                    
                     // Render current state
                     renderCurrentState();
                 }
@@ -266,6 +276,10 @@ public class ManageResumesActivity extends AppCompatActivity {
                 if (allResumes == null) allResumes = new ArrayList<>();
                 // Chỉ cập nhật data trong memory, không render lại UI
                 companyGroups = groupResumesByCompany(allResumes);
+                if ("ROLE_RECRUITER".equals(com.example.timviecapp.utils.TokenManager.getUserRole()) && !companyGroups.isEmpty()) {
+                    selectedCompanyGroup = companyGroups.get(0);
+                    jobGroups = groupResumesByJob(selectedCompanyGroup.getResumes());
+                }
                 // renderCurrentState() không xử lý STATE_RESUME_LIST → UI không thay đổi
                 if (currentNavigationState != STATE_RESUME_LIST) {
                     renderCurrentState();
@@ -411,13 +425,17 @@ public class ManageResumesActivity extends AppCompatActivity {
             jobGroupAdapter.setGroups(jobGroups);
             updateToolbarTitle();
         } else if (currentNavigationState == STATE_JOB_LIST) {
-            currentNavigationState = STATE_COMPANY_LIST;
-            selectedCompanyGroup = null;
-            binding.rvResumes.setVisibility(View.GONE);
-            binding.rvCompanies.setVisibility(View.VISIBLE);
-            binding.rvCompanies.setAdapter(companyGroupAdapter);
-            companyGroupAdapter.setGroups(companyGroups);
-            updateToolbarTitle();
+            if ("ROLE_RECRUITER".equals(com.example.timviecapp.utils.TokenManager.getUserRole())) {
+                super.onBackPressed();
+            } else {
+                currentNavigationState = STATE_COMPANY_LIST;
+                selectedCompanyGroup = null;
+                binding.rvResumes.setVisibility(View.GONE);
+                binding.rvCompanies.setVisibility(View.VISIBLE);
+                binding.rvCompanies.setAdapter(companyGroupAdapter);
+                companyGroupAdapter.setGroups(companyGroups);
+                updateToolbarTitle();
+            }
         } else {
             super.onBackPressed();
         }

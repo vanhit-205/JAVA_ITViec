@@ -334,6 +334,55 @@
                     android:orientation="vertical"
                     android:padding="8dp">
 
+                    <!-- Recruiter's Company Info (Visible only to recruiters) -->
+                    <LinearLayout
+                        android:id="@+id/layoutRecruiterCompany"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:gravity="center_vertical"
+                        android:visibility="gone">
+                        
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_company"
+                            app:tint="@color/colorPrimary" />
+                            
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:orientation="vertical">
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nhà tuyển dụng thuộc công ty"
+                                android:textColor="@color/textSecondary"
+                                android:textSize="12sp" />
+                                
+                            <TextView
+                                android:id="@+id/txtRecruiterCompany"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Chưa cập nhật công ty"
+                                android:textColor="@color/textPrimary"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/divRecruiterCompany"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:background="@color/colorOutline"
+                        android:visibility="gone" />
+
                     <!-- Quản lý công việc -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnManageJobs"
@@ -369,6 +418,7 @@
                         app:iconPadding="16dp" />
 
                     <View
+                        android:id="@+id/divManageCompanies"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginHorizontal="16dp"

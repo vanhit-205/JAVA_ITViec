@@ -70,12 +70,21 @@ public class JobRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     jobData.setValue(response.body());
                 } else {
+                    android.util.Log.e("JobRepository", "createJob failed HTTP " + response.code());
+                    try {
+                        if (response.errorBody() != null) {
+                            android.util.Log.e("JobRepository", "createJob error body: " + response.errorBody().string());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     jobData.setValue(null);
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<JobResponse>> call, Throwable t) {
+                android.util.Log.e("JobRepository", "createJob network error: " + t.getMessage());
                 jobData.setValue(null);
             }
         });

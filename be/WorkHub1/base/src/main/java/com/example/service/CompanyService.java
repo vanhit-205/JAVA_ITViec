@@ -72,8 +72,10 @@ public class CompanyService {
      * Update company
      */
     @Transactional
-    public CompanyResponse update(Long id, CompanyUpdateRequest request) {
+    public CompanyResponse update(Long id, CompanyUpdateRequest request, String currentRole, Long currentCompanyId) {
         log.info("Updating company: " + id);
+
+        validateCompanyOwnership(id, currentRole, currentCompanyId);
 
         Company company = companyRepository.findActiveById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_FOUND.code,
@@ -98,8 +100,10 @@ public class CompanyService {
      * Soft delete company
      */
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id, String currentRole, Long currentCompanyId) {
         log.info("Deleting company: " + id);
+
+        validateCompanyOwnership(id, currentRole, currentCompanyId);
 
         Company company = companyRepository.findActiveById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_FOUND.code,
@@ -109,6 +113,15 @@ public class CompanyService {
         companyRepository.persist(company);
 
         log.info("Company soft deleted: " + id);
+    }
+
+    private void validateCompanyOwnership(Long id, String currentRole, Long currentCompanyId) {
+        if ("ROLE_RECRUITER".equals(currentRole)) {
+            if (currentCompanyId == null || !currentCompanyId.equals(id)) {
+                throw new AppException(ErrorCode.COMPANY_ACCESS_DENIED.code,
+                        ErrorCode.COMPANY_ACCESS_DENIED.message);
+            }
+        }
     }
 
     /**

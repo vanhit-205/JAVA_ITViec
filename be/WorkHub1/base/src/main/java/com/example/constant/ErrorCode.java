@@ -32,6 +32,7 @@ public enum ErrorCode {
     // Company specific
     COMPANY_NOT_FOUND(4001, "Company not found"),
     COMPANY_ALREADY_EXISTS(4002, "Company with this name already exists"),
+    COMPANY_ACCESS_DENIED(4003, "Access denied to this company"),
 
     // Skill specific
     SKILL_NOT_FOUND(5001, "Skill not found"),

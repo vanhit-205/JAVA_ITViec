@@ -44,7 +44,13 @@ public class RoleUpgradeAdapter extends RecyclerView.Adapter<RoleUpgradeAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         RoleUpgradeRequest request = requestList.get(position);
         
-        holder.tvCompanyName.setText(request.getNewCompanyName() != null ? request.getNewCompanyName() : "Tên doanh nghiệp chưa cập nhật");
+        if (request.getCompanyName() != null && !request.getCompanyName().isEmpty()) {
+            holder.tvCompanyName.setText(request.getCompanyName() + " (Liên kết)");
+        } else if (request.getNewCompanyName() != null && !request.getNewCompanyName().isEmpty()) {
+            holder.tvCompanyName.setText(request.getNewCompanyName() + " (Đăng ký mới)");
+        } else {
+            holder.tvCompanyName.setText("Tên doanh nghiệp chưa cập nhật");
+        }
         
         String applicantName = request.getApplicantName() != null ? request.getApplicantName() : "Ứng viên";
         String applicantEmail = request.getApplicantEmail() != null ? request.getApplicantEmail() : "Chưa cập nhật";
